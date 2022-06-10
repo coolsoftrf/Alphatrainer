@@ -1,0 +1,14 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/pref_header_ads"
+        />
+    <SwitchPreference
+        android:key="@string/pref_key_interstitial"
+        android:title="@string/pref_title_interstitial"
+        android:summary="@string/pref_summary_interstitial"
+        android:defaultValue="@bool/pref_default_interstitial"
+
+        />
+    <!--android:enabled="false"-->
+</PreferenceScreen>

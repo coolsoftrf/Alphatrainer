@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Альфатренер</string>
+
+    <string name="navigation_drawer_open">Открыть шторку</string>
+    <string name="navigation_drawer_close">Закрыть шторку</string>
+
+    <string name="mode_alph">Азбука</string>
+    <string name="mode_pron">Орфография</string>
+    <string name="mode_tran">Перевод</string>
+
+    <string name="action_shuffle">Ещё раз</string>
+    <string name="action_settings">Настройки</string>
+
+    <string name="congratulations">Ура!</string>
+    <string name="result_alpha" formatted="false">Ваше время: %s\nЧисло пар: %d\nЧисло ошибок: %d</string>
+    <string name="result_words" formatted="false">Ваше время: %s\nПодсказок: %d</string>
+
+    <!--Content Descriptions-->
+    <string name="contentDescription_guess">Ваш ответ</string>
+    <string name="contentDescription_correct">Правильно</string>
+    <string name="contentDescription_hint">Подсветка</string>
+    <string name="contentDescription_help">Подсказка</string>
+    <string name="contentDescription_x">Очистить</string>
+    <string name="contentDescription_c">Отменить</string>
+</resources>

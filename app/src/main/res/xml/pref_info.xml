@@ -1,0 +1,16 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/pref_header_info"
+        />
+    <Preference
+        android:key="@string/pref_key_eula"
+        android:title="@string/pref_title_eula"
+        android:summary="@string/pref_summary_eula"
+        />
+    <Preference
+        android:key="@string/pref_key_about"
+        android:title="@string/pref_title_about"
+        />
+
+</PreferenceScreen>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/pref_header_all_langs"/>
+    <SwitchPreference
+        android:key="@string/pref_key_phonetic"
+        android:title="@string/pref_header_phonetic"
+        android:summary="@string/pref_summary_phonetic"/>
+    <SwitchPreference
+        android:key="@string/pref_key_obsolete"
+        android:title="@string/pref_header_obsolete"
+        android:summary="@string/pref_summary_obsolete"/>
+    <PreferenceCategory android:title="@string/pref_header_langs"/>
+</PreferenceScreen>

@@ -1,0 +1,49 @@
+<resources>
+    <string name="title_activity_settings">Settings</string>
+
+
+    <string name="pref_header_general">General</string>
+    <string name="pref_title_quantity">Pairs to generate</string>
+
+    <string name="pref_title_script">Transcription priority…</string>
+    <string name="pref_summary_script">Language order to look for symbol or word description</string>
+    <string name="pref_caption_script">Drag items to set priority</string>
+
+    <string name="pref_header_levels">Dictionaries…</string>
+    <string name="pref_summary_levels">Choose active dictionaries and difficulty levels</string>
+    <string name="pref_header_all_langs">All Languages</string>
+    <string name="pref_header_langs">Languages</string>
+    <string name="pref_header_phonetic">Show phonetic symbols</string>
+    <string name="pref_summary_phonetic">In Alphabet mode propose names for vocalization symbols, final letters and other phonetic modifiers</string>
+    <string name="pref_header_obsolete">Show obsolete symbols</string>
+    <string name="pref_summary_obsolete">In all modes show symbols removed from modern alphabet</string>
+
+
+    <string name="pref_header_ads">Commercials</string>
+    <string name="pref_title_interstitial">Interstitial in WiFi</string>
+    <string name="pref_summary_interstitial">Allow interstitial ads over WiFi only</string>
+
+
+    <string name="pref_header_info">Information</string>
+    <string name="pref_title_eula">EULA…</string>
+    <string name="pref_summary_eula">End-user license agreement</string>
+    <string name="pref_caption_eula_pending">You must accept EULA</string>
+    <string name="pref_caption_eula_accepted">You have already accepted EULA</string>
+    <string name="pref_text_eula">\n
+This is an agreement between you, the end-user, and me, the author of Alphatrainer application for Android platform.
+If you want to use this application you must accept this agreement, or otherwise delete, uninstall or remove it in any other way from your device.\n\n
+
+By making a positive answer below you agree to the right to freely use, showcase any user-available content or distribute information about the Alphatrainer application.\n\n
+
+You also agree not to break, decompile or modify in any way this application or any part of the application package (the apk file) without my awareness as well as not to use the source code entirely or any part in third-party applications.\n\n
+
+You are however allowed and recommended to extend the application database with new content - Language sets of Alphabets, Spell pairs and Translation pairs.
+You meanwhile are hereby warned from sharing or distributing such databases until you have performed all necessary tests ensuring that your content is consistent and doesn\'t lead to Alphatrainer application crash. For better distribution of your content please send the resulting database to me so that your contribution is included into subsequent releases of Alphatrainer application.
+    </string>
+
+    <string name="pref_title_about">About…</string>
+    <string name="pref_text_about">\n
+The trainer application allows quickly in playful manner consolidate knowledge of foreign languages. Start with choosing the language you want to work with, in alphabet mode test your knowledge of foreign letters, go through pronunciation mode to verify your spell skills, end up with translation mode to improve your memory.
+Should you experience any issues using the app or you find a bug please contact me (e-mail to coolsoft.rf@gmail.com). This is a new app and bugs are "must be" :) You\'re also welcome to the Alphatrainer beta-testing group in Google+.
+    </string>
+</resources>

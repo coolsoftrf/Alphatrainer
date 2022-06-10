@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ru.coolsoft.alphatrainer.ui.layouts.RelativeLayoutEx xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/dialog_outer_margin"
+    android:paddingBottom="@dimen/dialog_outer_margin"
+    android:background="?android:attr/selectableItemBackground"
+    android:minHeight="?android:attr/listPreferredItemHeight">
+
+    <TextView android:id="@android:id/text1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="?android:attr/listPreferredItemPaddingStart"
+        android:layout_marginEnd="?android:attr/listPreferredItemPaddingEnd"
+        android:layout_marginTop="@dimen/dialog_inner_margin"
+        android:textAppearance="?android:attr/textAppearanceListItem"
+        android:layout_marginLeft="?android:attr/listPreferredItemPaddingLeft"
+        android:layout_marginRight="?android:attr/listPreferredItemPaddingRight" />
+
+    <TextView android:id="@android:id/text2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@android:id/text1"
+        android:layout_alignStart="@android:id/text1"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_alignLeft="@android:id/text1" />
+
+</ru.coolsoft.alphatrainer.ui.layouts.RelativeLayoutEx>

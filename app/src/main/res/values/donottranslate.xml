@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="empty"/>
+
+    <string name="pref_key_quantity">quantity</string>
+    <string name="pref_default_quantity">14</string>
+
+    <string name="pref_key_script">script_lang</string>
+    <string name="pref_key_phonetic">phonetic</string>
+    <string name="pref_key_obsolete">obsolete</string>
+    <string name="pref_key_levels">levels_</string>
+
+    <string name="pref_key_interstitial">interstitial</string>
+    <bool name="pref_default_interstitial">true</bool>
+
+    <string name="pref_key_eula">eula</string>
+
+    <string name="pref_key_about">about</string>
+</resources>

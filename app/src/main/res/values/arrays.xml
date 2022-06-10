@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="mode_names" translatable="false">
+        <item>@string/mode_alph</item>
+        <item>@string/mode_pron</item>
+        <item>@string/mode_tran</item>
+    </string-array>
+    <string-array name="mode_pics" translatable="false">
+        <item>@drawable/alphas</item>
+        <item>@drawable/mouth</item>
+        <item>@drawable/hito</item>
+    </string-array>
+</resources>

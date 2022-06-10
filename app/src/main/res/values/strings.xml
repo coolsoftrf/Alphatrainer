@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">AlphaTrainer</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="mode_alph">Alphabet</string>
+    <string name="mode_pron">Spell</string>
+    <string name="mode_tran">Translation</string>
+
+    <string name="action_shuffle">Shuffle</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="congratulations">Congratulations!</string>
+    <string name="result_alpha" formatted="false">Your time: %s\nMatches: %d\nMistakes: %d</string>
+    <string name="result_words" formatted="false">Your time: %s\nHints used: %d</string>
+
+    <!--Content Descriptions-->
+    <string name="contentDescription_guess">Your guess</string>
+    <string name="contentDescription_correct">Good job</string>
+    <string name="contentDescription_hint">Highlight</string>
+    <string name="contentDescription_help">Hint</string>
+    <string name="contentDescription_x">Clear text</string>
+    <string name="contentDescription_c">Undo</string>
+</resources>
