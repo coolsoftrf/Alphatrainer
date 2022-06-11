@@ -1,25 +1,22 @@
 package ru.coolsoft.alphatrainer;
 
-import android.annotation.TargetApi;
-import android.app.DialogFragment;
-import android.app.FragmentManager;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.MultiSelectListPreference;
-import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.preference.PreferenceScreen;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.preference.MultiSelectListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceScreen;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 import ru.coolsoft.alphatrainer.data.DbAccessor;
@@ -37,8 +34,8 @@ import ru.coolsoft.alphatrainer.ui.dialogs.SortableListDialogFragment;
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
-public class SettingsActivity extends PreferenceActivity
-implements SortableListDialogFragment.SortableListDialogListener {
+public class SettingsActivity extends AppCompatActivity
+        implements SortableListDialogFragment.SortableListDialogListener {
     /**
      * Determines whether to always show the simplified settings UI, where
      * settings are presented in a single list. When false, settings are shown
@@ -46,41 +43,37 @@ implements SortableListDialogFragment.SortableListDialogListener {
      * shown on tablets.
      */
     //private static final boolean ALWAYS_SIMPLE_PREFS = false;
-
     private static Preference.OnPreferenceClickListener opclAlert(final FragmentManager fm, final Context context) {
-        return new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(final Preference preference) {
-                if (fm.findFragmentByTag( preference.getKey()) != null){
-                    return true;
-                }
-                boolean isEULA = preference.getKey().equals(
-                        context.getString(R.string.pref_key_eula)
-                );
-                boolean isEulaAccepted = PreferenceManager
-                        .getDefaultSharedPreferences(context)
-                        .getBoolean(preference.getKey(), false);
-
-                DialogFragment alertDialogFragment = new AlertDialogFragment();
-
-                Bundle args = new Bundle();
-                args.putString(AlertDialogFragment.ITEM_PREFERENCE_KEY, preference.getKey());
-                args.putString(AlertDialogFragment.ITEM_PREFERENCE_TITLE, preference.getTitle().toString());
-                args.putBoolean(AlertDialogFragment.ITEM_IS_EULA, isEULA);
-                args.putBoolean(AlertDialogFragment.ITEM_IS_EULA_ACCEPTED, isEulaAccepted);
-                alertDialogFragment.setArguments(args);
-
-                if (isEULA && !isEulaAccepted) {
-                    alertDialogFragment.setCancelable(false);
-                }
-
-				alertDialogFragment.show(fm, preference.getKey());
+        return preference -> {
+            if (fm.findFragmentByTag(preference.getKey()) != null) {
                 return true;
             }
+            boolean isEULA = preference.getKey().equals(
+                    context.getString(R.string.pref_key_eula)
+            );
+            boolean isEulaAccepted = PreferenceManager
+                    .getDefaultSharedPreferences(context)
+                    .getBoolean(preference.getKey(), false);
+
+            DialogFragment alertDialogFragment = new AlertDialogFragment();
+
+            Bundle args = new Bundle();
+            args.putString(AlertDialogFragment.ITEM_PREFERENCE_KEY, preference.getKey());
+            args.putString(AlertDialogFragment.ITEM_PREFERENCE_TITLE, preference.getTitle().toString());
+            args.putBoolean(AlertDialogFragment.ITEM_IS_EULA, isEULA);
+            args.putBoolean(AlertDialogFragment.ITEM_IS_EULA_ACCEPTED, isEulaAccepted);
+            alertDialogFragment.setArguments(args);
+
+            if (isEULA && !isEulaAccepted) {
+                alertDialogFragment.setCancelable(false);
+            }
+
+            alertDialogFragment.show(fm, preference.getKey());
+            return true;
         };
     }
 
-    public static void showEula(final FragmentManager fm, Context context){
+    public static void showEula(final FragmentManager fm, Context context) {
         Preference preference = new Preference(context);
 
         //these 2 attributes are used in #onPreferenceClick to show the dialog
@@ -94,7 +87,7 @@ implements SortableListDialogFragment.SortableListDialogListener {
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        if(getIntent().getAction() == null) {
+        if (getIntent().getAction() == null) {
             setupSimplePreferencesScreen();
         }
     }
@@ -105,9 +98,11 @@ implements SortableListDialogFragment.SortableListDialogListener {
      * shown.
      */
     private void setupSimplePreferencesScreen() {
+/*
         if (isCompositePreferences(this)) {
             return;
         }
+*/
 
         //Populate General fragment with additionally all other settings
         GeneralPreferenceFragment gpf = new GeneralPreferenceFragment();
@@ -116,7 +111,7 @@ implements SortableListDialogFragment.SortableListDialogListener {
         b.putBoolean(GeneralPreferenceFragment.ARG_INCLUDE_ALL, true);
 
         gpf.setArguments(b);
-        getFragmentManager().beginTransaction()
+        getSupportFragmentManager().beginTransaction()
                 .replace(android.R.id.content, gpf)
                 .commit();
     }
@@ -125,36 +120,43 @@ implements SortableListDialogFragment.SortableListDialogListener {
     /**
      * {@inheritDoc}
      */
+/*
     @Override
     public boolean onIsMultiPane() {
         return isXLargeTablet(this) && isCompositePreferences(this);
     }
+*/
 
     /**
      * Helper method to determine if the device has an extra-large screen. For
      * example, 10" tablets are extra-large.
      */
+/*
     private static boolean isXLargeTablet(Context context) {
         return (context.getResources().getConfiguration().screenLayout
                 & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
     }
+*/
 
     /**
      * Determines whether the simplified settings UI should be shown. This is
      * true if this is forced via ALWAYS_SIMPLE_PREFS (deprecated), or the device
-     * doesn't have newer APIs like {@link PreferenceFragment}, or the device
+     * doesn't have newer APIs like {@link PreferenceFragmentCompat}, or the device
      * doesn't have an extra-large screen. In these cases, a single-pane
      * "simplified" settings UI should be shown.
      */
+/*
     private static boolean isCompositePreferences(Context context) {
         return //ALWAYS_SIMPLE_PREFS ||
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
                         && isXLargeTablet(context);
     }
+*/
 
     /**
      * {@inheritDoc}
      */
+/*
     @Override
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void onBuildHeaders(List<Header> target) {
@@ -162,20 +164,18 @@ implements SortableListDialogFragment.SortableListDialogListener {
             loadHeadersFromResource(R.xml.pref_headers, target);
         }
     }
+*/
 
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
      */
-    private static final Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object value) {
-            String stringValue = value.toString();
+    private static final Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = (preference, value) -> {
+        String stringValue = value.toString();
 
-            preference.setSummary(stringValue);
+        preference.setSummary(stringValue);
 
-            return true;
-        }
+        return true;
     };
 
     /**
@@ -206,12 +206,14 @@ implements SortableListDialogFragment.SortableListDialogListener {
         e.putString(getString(R.string.pref_key_script), DbAccessor.firstScript());
         e.commit();*/
     }
-/*
-    @Override
-    public void onNegativeButtonClicked() {
 
-    }
-*/
+    /*
+        @Override
+        public void onNegativeButtonClicked() {
+
+        }
+    */
+/*
     @Override
     protected boolean isValidFragment(String fragmentName) {
         return Arrays.asList(GeneralPreferenceFragment.class.getName()
@@ -220,51 +222,42 @@ implements SortableListDialogFragment.SortableListDialogListener {
                 , LanguagesPreferenceFragment.class.getName()
         ).contains(fragmentName);
     }
+*/
 
     ////////////////////////////////////////////
     //////////////// FRAGMENTS /////////////////
     ////////////////////////////////////////////
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private abstract static class PreferenceFragmentBase extends PreferenceFragment {
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-            invokeSetupFragment();
-        }
-        public abstract void invokeSetupFragment();
-    }
-
     /**
      * This fragment shows general preferences only. It is used when the
      * activity is showing a two-pane settings UI.
      */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class GeneralPreferenceFragment extends PreferenceFragmentBase{
+    //@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class GeneralPreferenceFragment extends PreferenceFragmentCompat {
+
         public static final String ARG_INCLUDE_ALL = "include_all_preferences";
-        public void invokeSetupFragment(){
+
+        @Override
+        public void onCreatePreferences(
+                @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState,
+                @Nullable @org.jetbrains.annotations.Nullable String rootKey) {
             setupFragment(this);
 
             Bundle args = getArguments();
-            if(args != null && args.getBoolean(ARG_INCLUDE_ALL, false)){
+            if (args != null && args.getBoolean(ARG_INCLUDE_ALL, false)) {
                 AdsPreferenceFragment.setupFragment(this);
                 InfoPreferenceFragment.setupFragment(this);
             }
         }
-        public static void setupFragment(final PreferenceFragment preferenceFragment) {
-            Context ctx = preferenceFragment.getActivity();
+
+        public static void setupFragment(final PreferenceFragmentCompat preferenceFragment) {
+            Context ctx = preferenceFragment.requireActivity();
             preferenceFragment.addPreferencesFromResource(R.xml.pref_general);
 
             bindPreferenceSummaryToValue(preferenceFragment.findPreference(ctx.getString(R.string.pref_key_quantity)));
 
             Preference prefLangPriority = preferenceFragment.findPreference(ctx.getString(R.string.pref_key_script));
-            prefLangPriority.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
+            if(prefLangPriority != null) {
+                prefLangPriority.setOnPreferenceClickListener(preference -> {
                     ArrayList<String> langIDs = new ArrayList<>();
                     ArrayList<String> langs = DbAccessor.descriptives(langIDs);
 
@@ -273,36 +266,42 @@ implements SortableListDialogFragment.SortableListDialogListener {
                     args.putStringArrayList(SortableListDialogFragment.ITEM_NAMES, langs);
                     args.putStringArrayList(SortableListDialogFragment.ITEM_KEYS, langIDs);
                     sldf.setArguments(args);
-                    sldf.show(preferenceFragment.getFragmentManager(), preference.getKey());
+                    sldf.show(preferenceFragment.getParentFragmentManager(), preference.getKey());
                     return true;
-                }
-            });
+                });
+            }
         }
     }
+
     /**
      * This fragment shows ad-related preferences only. It is used when the
      * activity is showing a two-pane settings UI.
      */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class AdsPreferenceFragment extends PreferenceFragmentBase {
-        public void invokeSetupFragment(){
+//    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class AdsPreferenceFragment extends PreferenceFragmentCompat {
+        @Override
+        public void onCreatePreferences(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState, @Nullable @org.jetbrains.annotations.Nullable String rootKey) {
             setupFragment(this);
         }
-        public static void setupFragment(final PreferenceFragment preferenceFragment){
+
+        public static void setupFragment(final PreferenceFragmentCompat preferenceFragment) {
             preferenceFragment.addPreferencesFromResource(R.xml.pref_ads);
         }
     }
+
     /**
      * This fragment shows general preferences only. It is used when the
      * activity is showing a two-pane settings UI.
      */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class InfoPreferenceFragment extends PreferenceFragmentBase{
-        public void invokeSetupFragment(){
+//    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class InfoPreferenceFragment extends PreferenceFragmentCompat {
+        @Override
+        public void onCreatePreferences(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState, @Nullable @org.jetbrains.annotations.Nullable String rootKey) {
             setupFragment(this);
         }
-        public static void setupFragment(final PreferenceFragment preferenceFragment){
-            Context ctx = preferenceFragment.getActivity();
+
+        public static void setupFragment(final PreferenceFragmentCompat preferenceFragment) {
+            Context ctx = preferenceFragment.requireContext();
             FragmentManager fm = preferenceFragment.getFragmentManager();
             preferenceFragment.addPreferencesFromResource(R.xml.pref_info);
 
@@ -317,13 +316,14 @@ implements SortableListDialogFragment.SortableListDialogListener {
     /**
      * This fragment shows Language list for Level preferences.
      */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class LanguagesPreferenceFragment extends PreferenceFragmentBase {
-        public void invokeSetupFragment(){
+//    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class LanguagesPreferenceFragment extends PreferenceFragmentCompat {
+        @Override
+        public void onCreatePreferences(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState, @Nullable @org.jetbrains.annotations.Nullable String rootKey) {
             addPreferencesFromResource(R.xml.pref_levels);
             final PreferenceScreen ps = getPreferenceScreen();
 
-            final Context ctx = getActivity();
+            final Context ctx = requireContext();
             final String keyPrefix = ctx.getString(R.string.pref_key_levels);
             final ArrayList<String> langIds = new ArrayList<>();
             final ArrayList<String> langDescriptions = new ArrayList<>();
@@ -336,7 +336,7 @@ implements SortableListDialogFragment.SortableListDialogListener {
                         langId, levelIds, levelsEnabled
                 );
 
-                MultiSelectListPreference pref = new MultiSelectListPreference(ctx){
+                MultiSelectListPreference pref = new MultiSelectListPreference(ctx) {
                     @Override
                     public void setValues(Set<String> values) {
                         DbAccessor.updateLevels(langId, values);

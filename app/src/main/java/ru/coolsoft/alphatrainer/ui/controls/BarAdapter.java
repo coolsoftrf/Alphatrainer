@@ -16,9 +16,9 @@ import java.util.Arrays;
 * Created by Bobby© on 05.04.2015.
 */
 public class BarAdapter extends ArrayAdapter<CharSequence> {
-    private int mFieldId;
-    private int mImgId;
-    private int[] mImages;
+    private final int mFieldId;
+    private final int mImgId;
+    private final int[] mImages;
 /*
     private BarAdapter(Context context, int resource, CharSequence[] objects) {
         super(context, resource, objects);

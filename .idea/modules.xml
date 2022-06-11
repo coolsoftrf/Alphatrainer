@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/AlphaTrainer.iml" filepath="$PROJECT_DIR$/AlphaTrainer.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Alphatrainer.iml" filepath="$PROJECT_DIR$/.idea/modules/Alphatrainer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Alphatrainer.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Alphatrainer.app.iml" />
     </modules>
   </component>
 </project>

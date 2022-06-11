@@ -3,11 +3,13 @@ package ru.coolsoft.alphatrainer.ui.dialogs;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
+import androidx.fragment.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+
+import org.jetbrains.annotations.NotNull;
 
 import ru.coolsoft.alphatrainer.R;
 
@@ -27,7 +29,7 @@ public class AlertDialogFragment extends DialogFragment{
     {
         @Override
         public void onClick(DialogInterface dialog, int which) {
-            Activity activity = AlertDialogFragment.this.getActivity();
+            Activity activity = AlertDialogFragment.this.requireActivity();
             switch (which) {
                 case DialogInterface.BUTTON_POSITIVE:
                     if (_isEula) {
@@ -49,6 +51,7 @@ public class AlertDialogFragment extends DialogFragment{
         }
     };
 
+    @NotNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         String key = getArguments().getString(ITEM_PREFERENCE_KEY);

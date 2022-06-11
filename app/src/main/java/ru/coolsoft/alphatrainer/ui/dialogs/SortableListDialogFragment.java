@@ -3,13 +3,15 @@ package ru.coolsoft.alphatrainer.ui.dialogs;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
+import androidx.fragment.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -33,6 +35,7 @@ public class SortableListDialogFragment extends DialogFragment{
 
     private SortableListDialogListener mListener;
 
+    @NotNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Context c = getActivity();
@@ -54,24 +57,21 @@ public class SortableListDialogFragment extends DialogFragment{
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
         //Configure buttons
-        final DialogInterface.OnClickListener clickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which){
-                    case AlertDialog.BUTTON_POSITIVE:
-                        //Save new precedence
-                        LinkedList<Long> precedence = new LinkedList<>();
-                        for (int i = 0; i < adapter.getCount(); i++) {
-                            precedence.add(adapter.getItemId(i));
-                        }
+        final DialogInterface.OnClickListener clickListener = (dialog, which) -> {
+            switch (which){
+                case AlertDialog.BUTTON_POSITIVE:
+                    //Save new precedence
+                    LinkedList<Long> precedence = new LinkedList<>();
+                    for (int i = 0; i < adapter.getCount(); i++) {
+                        precedence.add(adapter.getItemId(i));
+                    }
 
-                        mListener.onPositiveButtonClicked(precedence);
-                        break;
+                    mListener.onPositiveButtonClicked(precedence);
+                    break;
 /*
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        mListener.onNegativeButtonClicked();
+                case DialogInterface.BUTTON_NEGATIVE:
+                    mListener.onNegativeButtonClicked();
 */
-                }
             }
         };
         dlgPriority.setButton(AlertDialog.BUTTON_POSITIVE, getActivity().getString(android.R.string.ok), clickListener);
@@ -81,7 +81,7 @@ public class SortableListDialogFragment extends DialogFragment{
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(@NotNull Activity activity) {
         super.onAttach(activity);
         // Verify that the host activity implements the callback interface
         try {
