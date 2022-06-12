@@ -81,15 +81,15 @@ public class SortableListDialogFragment extends DialogFragment{
     }
 
     @Override
-    public void onAttach(@NotNull Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(@NotNull Context context) {
+        super.onAttach(context);
         // Verify that the host activity implements the callback interface
         try {
             // Instantiate the NoticeDialogListener so we can send events to the host
-            mListener = (SortableListDialogListener) activity;
+            mListener = (SortableListDialogListener) context;
         } catch (ClassCastException e) {
             // The activity doesn't implement the interface, throw exception
-            throw new ClassCastException(activity.getClass().getSimpleName()
+            throw new ClassCastException(context.getClass().getSimpleName()
                     + " must implement SortableListDialogListener");
         }
     }

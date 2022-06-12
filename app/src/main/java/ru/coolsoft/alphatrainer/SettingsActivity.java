@@ -6,6 +6,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
@@ -90,6 +91,17 @@ public class SettingsActivity extends AppCompatActivity
         if (getIntent().getAction() == null) {
             setupSimplePreferencesScreen();
         }
+
+        ActionBar supportActionBar = getSupportActionBar();
+        if(supportActionBar!=null) {
+            supportActionBar.setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     /**
@@ -115,56 +127,6 @@ public class SettingsActivity extends AppCompatActivity
                 .replace(android.R.id.content, gpf)
                 .commit();
     }
-
-
-    /**
-     * {@inheritDoc}
-     */
-/*
-    @Override
-    public boolean onIsMultiPane() {
-        return isXLargeTablet(this) && isCompositePreferences(this);
-    }
-*/
-
-    /**
-     * Helper method to determine if the device has an extra-large screen. For
-     * example, 10" tablets are extra-large.
-     */
-/*
-    private static boolean isXLargeTablet(Context context) {
-        return (context.getResources().getConfiguration().screenLayout
-                & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
-    }
-*/
-
-    /**
-     * Determines whether the simplified settings UI should be shown. This is
-     * true if this is forced via ALWAYS_SIMPLE_PREFS (deprecated), or the device
-     * doesn't have newer APIs like {@link PreferenceFragmentCompat}, or the device
-     * doesn't have an extra-large screen. In these cases, a single-pane
-     * "simplified" settings UI should be shown.
-     */
-/*
-    private static boolean isCompositePreferences(Context context) {
-        return //ALWAYS_SIMPLE_PREFS ||
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
-                        && isXLargeTablet(context);
-    }
-*/
-
-    /**
-     * {@inheritDoc}
-     */
-/*
-    @Override
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public void onBuildHeaders(List<Header> target) {
-        if (isCompositePreferences(this)) {
-            loadHeadersFromResource(R.xml.pref_headers, target);
-        }
-    }
-*/
 
     /**
      * A preference value change listener that updates the preference's summary
@@ -249,6 +211,12 @@ public class SettingsActivity extends AppCompatActivity
             }
         }
 
+        @Override
+        public void onResume() {
+            super.onResume();
+            ((AppCompatActivity) requireActivity()).setTitle(R.string.title_activity_settings);
+        }
+
         public static void setupFragment(final PreferenceFragmentCompat preferenceFragment) {
             Context ctx = preferenceFragment.requireActivity();
             preferenceFragment.addPreferencesFromResource(R.xml.pref_general);
@@ -302,7 +270,7 @@ public class SettingsActivity extends AppCompatActivity
 
         public static void setupFragment(final PreferenceFragmentCompat preferenceFragment) {
             Context ctx = preferenceFragment.requireContext();
-            FragmentManager fm = preferenceFragment.getFragmentManager();
+            FragmentManager fm = preferenceFragment.getActivity().getSupportFragmentManager();
             preferenceFragment.addPreferencesFromResource(R.xml.pref_info);
 
             Preference prefEULA = preferenceFragment.findPreference(ctx.getString(R.string.pref_key_eula));
@@ -359,6 +327,12 @@ public class SettingsActivity extends AppCompatActivity
                 ps.addPreference(pref);
             }
             setPreferenceScreen(ps);
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+            ((AppCompatActivity) requireActivity()).setTitle(R.string.title_activity_settings_dictionaries);
         }
     }
 }

@@ -1,6 +1,7 @@
 package ru.coolsoft.alphatrainer;
 
 import androidx.appcompat.app.ActionBar;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
@@ -123,7 +124,6 @@ public class GridActivity extends AppCompatActivity
         final ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
 
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setTitle(mTitle);
 
@@ -133,8 +133,7 @@ public class GridActivity extends AppCompatActivity
                 , R.array.mode_pics
                 , android.R.layout.activity_list_item
                 , android.R.id.text1, android.R.id.icon);
-        barAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item
-        );
+        barAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         actionBar.setListNavigationCallbacks(barAdapter, this);
         actionBar.setSelectedNavigationItem(mCurrentSelectedMode);
     }
@@ -316,7 +315,7 @@ public class GridActivity extends AppCompatActivity
         public void onCreate(Bundle savedInstanceState) {
             Log.d(TAG, "onCreate, invalidateOptionsMenu");
             super.onCreate(savedInstanceState);
-            //setHasOptionsMenu(true);
+            setHasOptionsMenu(true);
             requireActivity().invalidateOptionsMenu();
         }
 
@@ -538,10 +537,10 @@ public class GridActivity extends AppCompatActivity
         }
 
         @Override
-        public void onAttach(@NotNull Activity activity) {
+        public void onAttach(@NotNull Context context) {
             Log.d(TAG, "onAttach");
-            super.onAttach(activity);
-            ((GridActivity) activity).onSectionAttached(
+            super.onAttach(context);
+            ((GridActivity) context).onSectionAttached(
                     getArguments().getInt(ARG_LANGUAGE_NUMBER));
         }
 
@@ -562,7 +561,6 @@ public class GridActivity extends AppCompatActivity
             int position;
 
             DelayedClickHandler(GridData data, int position) {
-                //this.activity = activity;
                 this.data = data;
                 this.position = position;
             }

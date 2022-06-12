@@ -1,11 +1,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".GridActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".GridActivity">
     <item android:id="@+id/time" android:title="@string/empty"
-        android:showAsAction="withText|always" />
+        app:showAsAction="withText|always" />
     <item android:id="@+id/shuffle" android:title="@string/action_shuffle"
         android:icon="@android:drawable/stat_notify_sync"
-        android:showAsAction="withText|ifRoom" />
+        app:showAsAction="withText|ifRoom" />
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:icon="@android:drawable/ic_menu_preferences"
-        android:orderInCategory="100" android:showAsAction="withText|ifRoom" />
+        android:orderInCategory="100" app:showAsAction="withText|ifRoom" />
 </menu>
