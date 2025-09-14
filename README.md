@@ -1,5 +1,5 @@
-### About the project
-This is a Kotlin Multiplatform "AlphaTrainer" project targeting Android, Web (pending) and Desktop (JVM).
+### AlphaTrainer multiplatform
+This is a Kotlin Multiplatform project targeting Android, Web (pending) and Desktop (JVM).
 
 The application allows for quick and playful consolidation of foreign language knowledge that you're already started learning. Begin with choosing the language you want to work with, then choose a desired alphabet (for languages where there are several ones), adjust preferences if desired and start training.
 
@@ -21,7 +21,7 @@ Should you experience any issues while using the app or in case you find a bug, 
     folder is the appropriate location.
 * [/nonAndroid](./nonAndroid/src) is for code that shares implementation among platforms not related to Android
   - [commonMain](./nonAndroid/src/commonMain/kotlin) is for code that’s common for all such targets
-* * [/nonWasm](./nonWasm/src) is for code that shares implementation among platforms not related to Web Assembly
+* [/nonWasm](./nonWasm/src) is for code that shares implementation among platforms not related to Web Assembly
   - [commonMain](./nonWasm/src/commonMain/kotlin) is for code that’s common for all such targets
   - [jvmMain](./nonWasm/src/jvmMain/kotlin) and [androidMain](./nonWasm/src/androidMain/kotlin) are for Kotlin code that will be compiled for only the platform indicated in the folder name
  

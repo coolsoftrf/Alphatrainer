@@ -36,6 +36,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,9 +69,8 @@ fun AlphabetsScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
             val locale = LocalAppLocalization.current
-            val selectedScriptLanguageOrdinal = remember {
+            val selectedScriptLanguageOrdinal = rememberSaveable {
                 mutableStateOf(options.run {
                     listOf(locale, FALLBACK_LANGUAGE).firstNotNullOfOrNull {
                         indexOfFirst { opt -> it == opt.id }.let { i ->

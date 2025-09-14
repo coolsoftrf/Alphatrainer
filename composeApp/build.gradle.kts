@@ -77,7 +77,7 @@ android {
         applicationId = "ru.coolsoft.alphatrainer"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 6
+        versionCode = libs.versions.app.versionCode.get().toInt()
         versionName = libs.versions.app.version.get()
         base.archivesName = rootProject.name
     }
