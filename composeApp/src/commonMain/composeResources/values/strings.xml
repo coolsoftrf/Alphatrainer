@@ -1,0 +1,11 @@
+<resources>
+    <string name="im_learning">I'm learning</string>
+    <string name="im_learning_alphabet">I'm learning alphabet</string>
+    <string name="script_language">Language for character names</string>
+    <string name="pair_count">Number of characters to play</string>
+
+    <string name="timer">Your time: %1$s</string>
+    <string name="slip_count">Slip count: %1$d</string>
+    <string name="reload_icon">🔄</string>
+    <string name="home_icon">🏠</string>
+</resources>

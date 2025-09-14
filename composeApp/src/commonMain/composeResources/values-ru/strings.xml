@@ -1,0 +1,9 @@
+<resources>
+    <string name="im_learning">Я изучаю</string>
+    <string name="im_learning_alphabet">Я изучаю алфавит</string>
+    <string name="script_language">Алфавит для транскрипций</string>
+    <string name="pair_count">Количество букв в игре</string>
+
+    <string name="timer">Время: %1$s</string>
+    <string name="slip_count">Промахов: %1$d</string>
+</resources>

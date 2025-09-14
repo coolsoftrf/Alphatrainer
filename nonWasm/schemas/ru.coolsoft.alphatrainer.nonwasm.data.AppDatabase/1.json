@@ -1,0 +1,125 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "47c1964cf6743046da815d1d42381382",
+    "entities": [
+      {
+        "tableName": "Entities",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `Name` TEXT NOT NULL, `Flags` INTEGER NOT NULL, PRIMARY KEY(`_id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "Name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "flags",
+            "columnName": "Flags",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "_id"
+          ]
+        }
+      },
+      {
+        "tableName": "Spells",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `Spell` TEXT NOT NULL, `SpellLangId` TEXT NOT NULL, `LangId` TEXT NOT NULL, PRIMARY KEY(`_id`, `SpellLangId`, `LangId`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "spell",
+            "columnName": "Spell",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "spellLangId",
+            "columnName": "SpellLangId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "langId",
+            "columnName": "LangId",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "_id",
+            "SpellLangId",
+            "LangId"
+          ]
+        }
+      },
+      {
+        "tableName": "Alphabets",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` TEXT NOT NULL, `Symbol` TEXT NOT NULL, `Auxiliary` INTEGER NOT NULL, `LangId` TEXT NOT NULL, `ScriptLangId` TEXT NOT NULL, PRIMARY KEY(`_id`, `LangId`, `ScriptLangId`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "Symbol",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "aux",
+            "columnName": "Auxiliary",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "language",
+            "columnName": "LangId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "transcriptionLanguage",
+            "columnName": "ScriptLangId",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "_id",
+            "LangId",
+            "ScriptLangId"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '47c1964cf6743046da815d1d42381382')"
+    ]
+  }
+}
