@@ -18,14 +18,16 @@ class LanguagesViewModel(private val dataProvider: LanguagesDataProvider) : View
         val DATA_PROVIDER = CreationExtras.Key<LanguagesDataProvider>()
     }
 
+    private val _locale = MutableStateFlow<String?>(null)
     private val _languages = MutableStateFlow<List<LocalizedString>?>(null)
     val languages = _languages.asStateFlow()
 
     fun onLaunched(locale: String) {
-        _languages.value ?: reload(locale)
+        (if (locale == _locale.value) _languages.value else null) ?: reload(locale)
     }
 
     fun reload(locale: String) {
+        _locale.value = locale
         viewModelScope.launch {
             _languages.value = dataProvider(locale)
         }

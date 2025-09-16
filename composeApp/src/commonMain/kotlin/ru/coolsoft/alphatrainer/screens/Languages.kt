@@ -38,7 +38,7 @@ import ru.coolsoft.alphatrainer.models.languagesViewModelFactory
 
 typealias AlphabetsForLanguageProvider = suspend (language: String, uiLanguageId: String) -> List<LocalizedString>
 typealias AlphabetsForAlphabetListProvider =
-        suspend (language: List<String>, uiLanguageId: String) -> Map<String, List<LocalizedString>>
+        suspend (languages: List<String>, uiLanguageId: String) -> Map<String, List<LocalizedString>>
 
 @Composable
 fun LanguagesScreen(

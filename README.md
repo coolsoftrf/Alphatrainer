@@ -1,10 +1,6 @@
 ### AlphaTrainer multiplatform
 
-<div style="float:right">
-
-  ![logo](/composeApp/src/commonMain/composeResources/drawable/icon_ico.ico)
-
-</div>
+<img align="right" alt="logo" src="/composeApp/src/commonMain/composeResources/drawable/icon_ico.ico">
 
 This is a Kotlin Multiplatform project targeting Android, Web (pending) and Desktop (JVM).
 
