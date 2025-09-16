@@ -24,14 +24,14 @@
   - [x] Entities
   - [x] Capital letters
   - [x] Lowercase letters
-  - [ ] transcriptions for letter names 
+  - [ ] transcriptions for letter names
 -[ ] add dictionary mode
-  -[ ] learning
-  -[ ] training with flipcards
-  -[ ] training with manual input
+  - [ ] learning
+  - [ ] training with flipcards
+  - [ ] training with manual input
+  - [ ] periodic «Time to train» notifications
 
 ### * Back to Database
 
 - [ ] create database editor
 - [ ] revert database dir back to internal
-
