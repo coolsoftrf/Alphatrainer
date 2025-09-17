@@ -6,15 +6,15 @@
     - AR:  transcription visually remains but logically resets to default/fallback
     - ER: both remain and match
 - [X] detect locale hot changes on Languages screen
-- [ ] detect locale hot changes on Alphabets screen
+- [X] detect locale hot changes on Alphabets screen
 - [ ] sometimes cards are not clickable (latest clicked the previous time or what?)
 - [ ] sometimes cards are weakly or not at all shuffled
 
 ###  * User experience
 
 - [X] publish debug apk
-- [ ] describe database update procedure
-- [ ] invite into «Discussions» section
+- [X] describe database update procedure
+- [X] invite into «Discussions» section
 
 ###  * Database
 

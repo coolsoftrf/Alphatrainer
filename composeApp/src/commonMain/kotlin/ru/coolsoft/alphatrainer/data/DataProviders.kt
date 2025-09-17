@@ -2,20 +2,34 @@ package ru.coolsoft.alphatrainer.data
 
 import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
+import ru.coolsoft.alphatrainer.FALLBACK_LANGUAGE
 import ru.coolsoft.alphatrainer.models.Flipcard
 import ru.coolsoft.alphatrainer.shared.FlipcardRequest
 import ru.coolsoft.alphatrainer.shared.ICategorizedLocalizedEntity
 import ru.coolsoft.alphatrainer.shared.ILocalizedEntity
 import ru.coolsoft.alphatrainer.shared.ISymbolPair
 
-@Serializable
-data class LocalizedString(val id: String, val name: String, val transcription: String?)
 
-fun localizedString(entity: ILocalizedEntity) = LocalizedString(
-    entity.id,
-    entity.name,
-    entity.run { spell ?: fallbackSpell}
-)
+@Serializable
+data class LocalizedString(
+    val id: String,
+    val name: String,
+    val transcriptions: Map<String, String>
+) {
+    fun transcription(uiLanguageId: String) =
+        transcriptions[uiLanguageId] ?: transcriptions[FALLBACK_LANGUAGE]
+}
+
+fun localizedString(entityLocalizations: Map.Entry<Pair<String, String>, List<ILocalizedEntity>>) =
+    entityLocalizations.run {
+        LocalizedString(
+            key.first,
+            key.second,
+            value
+                .filter { e -> e.spellLangId != null && e.spell != null }
+                .associate { e -> e.spellLangId!! to e.spell!! }
+        )
+    }
 
 // ------------------------------------------
 // Flipcards
@@ -47,42 +61,47 @@ suspend fun trainableFlipcardData(request: FlipcardRequest): List<Flipcard> {
 // ------------------------------------------
 //ToDo: Move these mocks to tests
 val mockAlphabets = listOf(
-    LocalizedString("jakana_hi", "ひらがな", "Hiragana"),
-    LocalizedString("jakana_ka", "カタカナ", "Katakana"),
+    LocalizedString("jakana_hi", "ひらがな", mapOf(FALLBACK_LANGUAGE to "Hiragana")),
+    LocalizedString("jakana_ka", "カタカナ", mapOf(FALLBACK_LANGUAGE to "Katakana")),
 )
 
-suspend fun mockAlphabetsData(languageId: String, uiLanguageId: String): List<LocalizedString> {
+suspend fun mockAlphabetsData(languageId: String): List<LocalizedString> {
     delay(1000)
     return mockAlphabets
 }
 
 expect suspend fun getAvailableAlphabets(
-    language: String,
-    uiLanguageId: String
+    language: String
 ): List<ILocalizedEntity>
 
-suspend fun availableAlphabets(language: String, uiLanguageId: String): List<LocalizedString> {
-    return getAvailableAlphabets(language, uiLanguageId).map(::localizedString)
+suspend fun availableAlphabets(language: String): List<LocalizedString> {
+    return getAvailableAlphabets(language)
+        .groupBy { it.id to it.name }
+        .map { localizedString(it) }
 }
 
 // ------------------------------------------
 // Languages
 // ------------------------------------------
-expect suspend fun getTrainableLanguages(uiLanguageId: String): List<ILocalizedEntity>
+expect suspend fun getTrainableLanguages(): List<ILocalizedEntity>
 
-suspend fun trainableLanguages(uiLanguageId: String): List<LocalizedString> {
-    return getTrainableLanguages(uiLanguageId).map(::localizedString)
+suspend fun trainableLanguages(): List<LocalizedString> {
+    return getTrainableLanguages()
+        .groupBy { it.id to it.name }
+        .map(::localizedString)
 }
 
 expect suspend fun getScriptAlphabetsForAlphabets(
-    alphabets: List<String>,
-    uiLanguageId: String
+    alphabets: List<String>
 ): List<ICategorizedLocalizedEntity>
 
 suspend fun scriptAlphabetsForAlphabetList(
-    alphabets: List<String>,
-    uiLanguageId: String
+    alphabets: List<String>
 ): Map<String, List<LocalizedString>> {
-    return getScriptAlphabetsForAlphabets(alphabets, uiLanguageId)
-        .groupBy({ it.category }, ::localizedString)
+    return getScriptAlphabetsForAlphabets(alphabets)
+        .groupBy { it.category }
+        .mapValues {
+            it.value.groupBy { e -> e.id to e.name }
+                .map(::localizedString)
+        }
 }

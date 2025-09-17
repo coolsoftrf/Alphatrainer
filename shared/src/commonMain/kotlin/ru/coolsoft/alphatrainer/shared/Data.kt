@@ -10,14 +10,14 @@ interface IEntity {
 interface ILocalizedEntity {
     val id: String
     val name: String
+    val spellLangId: String?
     val spell: String?
-    val fallbackSpell: String?
 }
 
 interface ICategorizedLocalizedEntity: ILocalizedEntity {
     val category:String
 }
-
+/*
 fun entity(id: String, name: String): IEntity {
     return object : IEntity {
         override val id: String
@@ -26,11 +26,12 @@ fun entity(id: String, name: String): IEntity {
             get() = name
     }
 }
+*/
 
 interface ILanguageRepository {
-    suspend fun getAllTrainableLanguages(spellLanguageId: String): Flow<List<ILocalizedEntity>>
-    suspend fun getAlphabetsForLanguage(language: String, spellLanguageId: String): Flow<List<ILocalizedEntity>>
-    suspend fun getScriptAlphabetsForAlphabets(languages: List<String>, spellLanguageId: String): Flow<List<ICategorizedLocalizedEntity>>
+    suspend fun getAllTrainableLanguages(): Flow<List<ILocalizedEntity>>
+    suspend fun getAlphabetsForLanguage(language: String): Flow<List<ILocalizedEntity>>
+    suspend fun getScriptAlphabetsForAlphabets(languages: List<String>): Flow<List<ICategorizedLocalizedEntity>>
     suspend fun insert(entity: IEntity)
 }
 

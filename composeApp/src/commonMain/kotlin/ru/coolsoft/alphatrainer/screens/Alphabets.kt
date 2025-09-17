@@ -69,42 +69,49 @@ fun AlphabetsScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-            val locale = LocalAppLocalization.current
-            val selectedScriptLanguageOrdinal = rememberSaveable {
-                mutableStateOf(options.run {
-                    listOf(locale, FALLBACK_LANGUAGE).firstNotNullOfOrNull {
-                        indexOfFirst { opt -> it == opt.id }.let { i ->
-                            if (i == -1) null else i
-                        }
-                    } ?: 0
-                })
-            }
-            val selectedScriptLanguage = options[selectedScriptLanguageOrdinal.value]
+        val locale = LocalAppLocalization.current
+        val selectedScriptLanguageOrdinal = rememberSaveable {
+            mutableStateOf(options.run {
+                listOf(locale, FALLBACK_LANGUAGE).firstNotNullOfOrNull {
+                    indexOfFirst { opt -> it == opt.id }.let { i ->
+                        if (i == -1) null else i
+                    }
+                } ?: 0
+            })
+        }
+        val selectedScriptLanguage = options[selectedScriptLanguageOrdinal.value]
 
-            Text(
-                text = stringResource(Res.string.im_learning_alphabet),
-                modifier = Modifier.padding(20.dp),
-                style = MaterialTheme.typography.titleMedium
-            )
+        Text(
+            text = stringResource(Res.string.im_learning_alphabet),
+            modifier = Modifier.padding(20.dp),
+            style = MaterialTheme.typography.titleMedium
+        )
 
-            Alphabets(
-                alphabets,
-                onAlphabetSelected,
-                pairCountState,
-                selectedScriptLanguage,
-                baseToTranscriptMap
-            )
-            Spacer(Modifier.height(40.dp))
-            TargetLanguageSelector(selectedScriptLanguage, options, selectedScriptLanguageOrdinal)
-            Spacer(Modifier.height(20.dp))
-            PairCountInput(pairCountState)
-            Spacer(Modifier.height(20.dp))
+        Alphabets(
+            alphabets,
+            locale,
+            onAlphabetSelected,
+            pairCountState,
+            selectedScriptLanguage,
+            baseToTranscriptMap
+        )
+        Spacer(Modifier.height(40.dp))
+        TargetLanguageSelector(
+            selectedScriptLanguage,
+            options,
+            locale,
+            selectedScriptLanguageOrdinal
+        )
+        Spacer(Modifier.height(20.dp))
+        PairCountInput(pairCountState)
+        Spacer(Modifier.height(20.dp))
     }
 }
 
 @Composable
 private fun Alphabets(
     alphabets: List<LocalizedString>,
+    locale: String,
     onAlphabetSelected: (alphabetId: String, scriptLanguageId: String, pairCount: Int) -> Unit,
     pairCountState: TextFieldState,
     selectedScriptLanguage: LocalizedString,
@@ -131,7 +138,7 @@ private fun Alphabets(
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(text = a.name, style = MaterialTheme.typography.titleLarge)
-                a.transcription?.let {
+                a.transcription(locale)?.let {
                     Text(
                         text = it,
                         style = MaterialTheme.typography.bodyMedium
@@ -147,6 +154,7 @@ private fun Alphabets(
 private fun TargetLanguageSelector(
     selectedScriptLanguage: LocalizedString,
     options: List<LocalizedString>,
+    locale: String,
     selectedScriptLanguageOrdinal: MutableState<Int>
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -167,7 +175,7 @@ private fun TargetLanguageSelector(
                     text = {
                         Column {
                             Text(option.name, style = MaterialTheme.typography.titleSmall)
-                            option.transcription?.let {
+                            option.transcription(locale)?.let {
                                 Text(text = it, style = MaterialTheme.typography.bodySmall)
                             }
                         }

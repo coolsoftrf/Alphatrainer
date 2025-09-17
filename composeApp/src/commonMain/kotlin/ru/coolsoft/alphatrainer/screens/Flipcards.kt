@@ -92,7 +92,9 @@ fun FlipcardsScreen(
 
                 Text(
                     stringResource(Res.string.timer, timerValue),
-                    Modifier.graphicsLayer(
+                    Modifier
+                        .padding(20.dp)
+                        .graphicsLayer(
                         scaleX = timerFontScale,
                         scaleY = timerFontScale,
                         transformOrigin = TransformOrigin(0.5f, -1f)

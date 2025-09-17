@@ -11,8 +11,8 @@ import ru.coolsoft.alphatrainer.shared.ILocalizedEntity
 import ru.coolsoft.alphatrainer.shared.ICategorizedLocalizedEntity
 
 enum class BitField(val bitMask: Int) {
-    ApplicableForTrainingBitMask(1),
-    ApplicableForAlphabetsBitMask(2),
+    LanguageBitMask(1),
+    AlphabetBitMask(2),
     //TrainingLevelBitMask(4)
 }
 
@@ -37,8 +37,8 @@ data class LocalizedEntity(
     @ColumnInfo(name = "_id") override val id: String,
     @ColumnInfo(name = "Name") override val name: String,
     @ColumnInfo(name = "Flags") val flags: Int,
-    @ColumnInfo(name = "Spell") override val spell: String?,
-    @ColumnInfo(name = "FallbackSpell") override val fallbackSpell: String?
+    @ColumnInfo(name = "SpellLangId") override val spellLangId: String?,
+    @ColumnInfo(name = "Spell") override val spell: String?
 ) : ILocalizedEntity
 
 data class CategorizedLocalizedEntity(
@@ -46,24 +46,19 @@ data class CategorizedLocalizedEntity(
     @ColumnInfo(name = "_id") override val id: String,
     @ColumnInfo(name = "Name") override val name: String,
     @ColumnInfo(name = "Flags") val flags: Int,
-    @ColumnInfo(name = "Spell") override val spell: String?,
-    @ColumnInfo(name = "FallbackSpell") override val fallbackSpell: String?
+    @ColumnInfo(name = "SpellLangId") override val spellLangId: String?,
+    @ColumnInfo(name = "Spell") override val spell: String?
 ) : ICategorizedLocalizedEntity
 
 const val LOCALIZED_ENTITY_FIELDS = """
    e.*,
-   s1.Spell,
-   s2.Spell AS FallbackSpell
+   s.SpellLangId,
+   s.Spell
 """
 const val JOIN_SPELL_TABLES = """
    LEFT JOIN
-   spells s1 ON e._id = s1.LangId AND
-                s1.SpellLangId = :spellLanguageId AND
-                s1._id = ""
-   LEFT JOIN
-   spells s2 ON e._id = s2.LangId AND
-                s2.SpellLangId = "" AND
-                s2._id = ""
+   Spells s ON e._id = s.LangId AND
+          s._id = ""
 """
 const val WHERE_BITMASK = " WHERE (flags & :bitMask) > 0"
 const val QUERY_LOCALIZED_ENTITY =
@@ -81,28 +76,26 @@ const val QUERY_SCRIPT_LANGUAGES = """
 @Dao
 interface EntitiesDao {
     @Query(QUERY_LOCALIZED_ENTITY)
-    fun getAllEntitiesByFlagMask(spellLanguageId: String, bitMask: Int): Flow<List<LocalizedEntity>>
+    fun getAllEntitiesByFlagMask(bitMask: Int): Flow<List<LocalizedEntity>>
 
     @Query("$QUERY_LOCALIZED_ENTITY AND e._id LIKE :idPattern")
     fun getMatchingEntitiesByFlagMask(
         idPattern: String,
-        spellLanguageId: String,
         bitMask: Int
     ): Flow<List<LocalizedEntity>>
 
     @Query(
         """
         WITH als (id, category) AS ($QUERY_SCRIPT_LANGUAGES)
-        SELECT a.category, $LOCALIZED_ENTITY_FIELDS
-        FROM als a 
+        SELECT als.category, $LOCALIZED_ENTITY_FIELDS
+        FROM als
         INNER JOIN
-        Entities e ON e._id = a.id
+        Entities e ON e._id = als.id
         $JOIN_SPELL_TABLES
         """
     )
     fun getEntitiesForAlphabetsOfLanguageId(
-        languageIds: List<String>,
-        spellLanguageId: String
+        languageIds: List<String>
     ): Flow<List<CategorizedLocalizedEntity>>
 
     @Insert

@@ -9,18 +9,16 @@ import ru.coolsoft.alphatrainer.shared.ICategorizedLocalizedEntity
 import ru.coolsoft.alphatrainer.shared.ILocalizedEntity
 import ru.coolsoft.alphatrainer.shared.ISymbolPair
 
-actual suspend fun getTrainableLanguages(uiLanguageId: String): List<ILocalizedEntity> =
-    fetchAllTrainableLanguages(uiLanguageId)
+actual suspend fun getTrainableLanguages(): List<ILocalizedEntity> =
+    fetchAllTrainableLanguages()
 
 actual suspend fun getAvailableAlphabets(
-    language: String,
-    uiLanguageId: String
-): List<ILocalizedEntity> = fetchAlphabetsForLanguage(language, uiLanguageId)
+    language: String
+): List<ILocalizedEntity> = fetchAlphabetsForLanguage(language)
 
 actual suspend fun getTrainableAlphabet(request: FlipcardRequest): List<ISymbolPair> =
     fetchSymbolsForLanguage(request)
 
 actual suspend fun getScriptAlphabetsForAlphabets(
-    alphabets: List<String>,
-    uiLanguageId: String
-): List<ICategorizedLocalizedEntity> = fetchScriptAlphabetsForAlphabets(alphabets, uiLanguageId)
+    alphabets: List<String>
+): List<ICategorizedLocalizedEntity> = fetchScriptAlphabetsForAlphabets(alphabets)

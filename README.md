@@ -4,7 +4,7 @@
 
 This is a Kotlin Multiplatform project targeting Android, Web (pending) and Desktop (JVM).
 
-The application allows for quick and playful consolidation of foreign language knowledge that you're
+The application allows for quick and playful consolidation of foreign language knowledge that you've
 already started learning. Begin with choosing the language you want to work with, then choose a
 desired alphabet (for languages where there are several ones), adjust preferences if desired and
 start training.
@@ -16,7 +16,33 @@ Other modes yet to come:
 - translation mode to train your memory
 
 Should you experience any issues while using the app or in case you find a bug, please contact me
-over the Issues section on GitHub.
+over the Issues section on GitHub. With any questions or ideas, please don't hesitate to open a thread in Discussions section
+
+### Training sets customization
+
+The app database is open for customization that means that you may modify contents of any section shown in the app by adjusting appropriate table contents in the Training.db SQLite database.
+
+> [!IMPORTANT]
+Please run the app at least once before you can modify the database file
+
+#### Android
+
+Database file location: `/data/data/ru.coolsoft.alphatrainer/databases/Trainer.db`
+
+> [!IMPORTANT]
+In order to be able to gain access to the database file on a non-rooted Android device, a `debug` version of the app has to be installed rather than a `release` one.
+
+There are many ways to download the database file to your PC or get it modified right on the device. Here are the steps to accomplish this task using Android Studio:
+
+- connect the Android device to your Android Studio in debug mode
+- open Device Explorer and navigate to the database file location
+- download the file to your desktop (right-click the file name and select `Save As...`)
+- alter the database according to your plans, make sure that the `Trainer.db` file is actually updated and marked with new timestamp
+- upload the modified file to the device (right-click `databases` folder in Device Explorer, select `Upload...` and choose the modified database file)
+
+#### Desktop (JVM)
+
+Database file `Trainer.db` is located in the root folder of the app next to `Alphatrainer.exe` file. Any changes to the file will be visible with the very nex app start.
 
 ### Source code structure
 

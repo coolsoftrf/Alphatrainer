@@ -26,7 +26,6 @@ data class SymbolEntity(
     )
 }
 
-@Entity
 data class SymbolPairEntity(
     @ColumnInfo(name = "_id") override val id: String,
     @ColumnInfo(name = "Symbol") override val name: String,

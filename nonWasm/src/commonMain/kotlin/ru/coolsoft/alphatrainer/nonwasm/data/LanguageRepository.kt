@@ -11,42 +11,37 @@ import ru.coolsoft.alphatrainer.shared.ILocalizedEntity
 internal class LanguageRepository(db: AppDatabase) : ILanguageRepository {
     private val dao = db.getEntitiesDao()
 
-    override suspend fun getAllTrainableLanguages(spellLanguageId: String): Flow<List<ILocalizedEntity>> =
-        dao.getAllEntitiesByFlagMask(spellLanguageId, BitField.ApplicableForTrainingBitMask.bitMask)
+    override suspend fun getAllTrainableLanguages(): Flow<List<ILocalizedEntity>> =
+        dao.getAllEntitiesByFlagMask(BitField.LanguageBitMask.bitMask)
 
     override suspend fun getAlphabetsForLanguage(
-        language: String,
-        spellLanguageId: String
+        language: String
     ): Flow<List<ILocalizedEntity>> =
         dao.getMatchingEntitiesByFlagMask(
             "$language%",
-            spellLanguageId,
-            BitField.ApplicableForAlphabetsBitMask.bitMask
+            BitField.AlphabetBitMask.bitMask
         )
 
     override suspend fun getScriptAlphabetsForAlphabets(
-        languages: List<String>,
-        spellLanguageId: String
+        languages: List<String>
     ): Flow<List<ICategorizedLocalizedEntity>> =
-        dao.getEntitiesForAlphabetsOfLanguageId(languages, spellLanguageId)
+        dao.getEntitiesForAlphabetsOfLanguageId(languages)
 
     override suspend fun insert(entity: IEntity) =
-        dao.insert(Entity(entity, BitField.ApplicableForAlphabetsBitMask))
+        dao.insert(Entity(entity, BitField.AlphabetBitMask))
 }
 
 private val repository = Koin.di!!.koin.get<LanguageRepository>()
 
-suspend fun fetchAllTrainableLanguages(spellLanguageId: String): List<ILocalizedEntity> =
-    repository.getAllTrainableLanguages(spellLanguageId).first()
+suspend fun fetchAllTrainableLanguages(): List<ILocalizedEntity> =
+    repository.getAllTrainableLanguages().first()
 
 suspend fun fetchAlphabetsForLanguage(
-    language: String,
-    spellLanguageId: String
+    language: String
 ): List<ILocalizedEntity> =
-    repository.getAlphabetsForLanguage(language, spellLanguageId).first()
+    repository.getAlphabetsForLanguage(language).first()
 
 suspend fun fetchScriptAlphabetsForAlphabets(
-    alphabets: List<String>,
-    spellLanguageId: String
+    alphabets: List<String>
 ): List<ICategorizedLocalizedEntity> =
-    repository.getScriptAlphabetsForAlphabets(alphabets, spellLanguageId).first()
+    repository.getScriptAlphabetsForAlphabets(alphabets).first()

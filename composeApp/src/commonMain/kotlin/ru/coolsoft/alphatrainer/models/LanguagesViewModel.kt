@@ -11,25 +11,23 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.coolsoft.alphatrainer.data.LocalizedString
 
-typealias LanguagesDataProvider = suspend (uiLanguageId: String) -> List<LocalizedString>
+typealias LanguagesDataProvider = suspend () -> List<LocalizedString>
 
 class LanguagesViewModel(private val dataProvider: LanguagesDataProvider) : ViewModel() {
     companion object {
         val DATA_PROVIDER = CreationExtras.Key<LanguagesDataProvider>()
     }
 
-    private val _locale = MutableStateFlow<String?>(null)
     private val _languages = MutableStateFlow<List<LocalizedString>?>(null)
     val languages = _languages.asStateFlow()
 
-    fun onLaunched(locale: String) {
-        (if (locale == _locale.value) _languages.value else null) ?: reload(locale)
+    fun onLaunched() {
+        _languages.value ?: reload()
     }
 
-    fun reload(locale: String) {
-        _locale.value = locale
+    fun reload() {
         viewModelScope.launch {
-            _languages.value = dataProvider(locale)
+            _languages.value = dataProvider()
         }
     }
 }

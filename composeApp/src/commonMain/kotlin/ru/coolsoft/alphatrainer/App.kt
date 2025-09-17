@@ -1,6 +1,10 @@
 package ru.coolsoft.alphatrainer
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -9,6 +13,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -16,8 +21,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -89,7 +97,7 @@ data class Flipcards(
     val limitPairs: Int
 )
 
-private fun flipcards(alphabetId: String, scriptLanguageId: String, pairCount: Int) = Flipcards(
+fun flipcards(alphabetId: String, scriptLanguageId: String, pairCount: Int) = Flipcards(
     baseLanguageFor(alphabetId),
     alphabetId,
     scriptLanguageId,
@@ -134,48 +142,65 @@ fun App() {
                         },
                         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
                     )
-                }) {
+                }
+            ) {
                 val pairCountState = rememberTextFieldState(DEFAULT_PAIR_COUNT.toString())
-                NavHost(
-                    navController,
-                    LanguageChooser,
-                    Modifier
-                        .fillMaxSize()
-                        .systemBarsPadding()
-                ) {
-                    composable<LanguageChooser> {
-                        LanguagesScreen { alphabets, baseToTranscriptMap ->
-                            if (alphabets.size == 1 &&
-                                baseToTranscriptMap[baseLanguageFor(alphabets.first().id)] == null
-                            ) {
-                                navController.navigate(
-                                    flipcards(
-                                        alphabets.first().id,
-                                        FALLBACK_LANGUAGE,
-                                        pairCountState.text.toString().toInt()
-                                    )
-                                )
-                            } else {
-                                navController.navigate(
-                                    AlphabetChooser(alphabets, baseToTranscriptMap)
+                NavigationHandler(navController, pairCountState.text.toString().toInt()) {
+                    Box(
+                        Modifier
+                            .fillMaxSize()
+                            .systemBarsPadding()
+                    ) {
+                        NavHost(
+                            navController,
+                            LanguageChooser,
+                            Modifier.fillMaxSize()
+                        ) {
+                            composable<LanguageChooser> {
+                                LanguagesScreen(::onLanguageSelected)
+                            }
+                            composable<AlphabetChooser>(typeMap = AlphabetChooser.typeMap) { entry ->
+                                val (alphabets, transcriptionLanguages) = entry.toRoute<AlphabetChooser>()
+                                AlphabetsScreen(
+                                    alphabets,
+                                    transcriptionLanguages,
+                                    pairCountState,
+                                    ::onAlphabetSelected
                                 )
                             }
+                            composable<Flipcards> { entry ->
+                                FlipcardsScreen(flipcardRequest(entry.toRoute<Flipcards>())) {
+                                    navController.popBackStack(LanguageChooser::class, false)
+                                }
+                            }
                         }
-                    }
-                    composable<AlphabetChooser>(typeMap = AlphabetChooser.typeMap) { entry ->
-                        val (alphabets, transcriptionLanguages) = entry.toRoute<AlphabetChooser>()
-                        AlphabetsScreen(
-                            alphabets,
-                            transcriptionLanguages,
-                            pairCountState
-                        ) { a, s, c ->
-                            navController.navigate(flipcards(a, s, c))
-                        }
-                    }
-                    composable<Flipcards> { entry ->
-                        FlipcardsScreen(flipcardRequest(entry.toRoute<Flipcards>())) {
-                            navController.popBackStack(LanguageChooser::class, false)
-                        }
+
+                        //Shades
+                        Box(
+                            Modifier
+                                .fillMaxWidth()
+                                .height(20.dp)
+                                .background(
+                                    Brush.verticalGradient(
+                                        listOf(
+                                            MaterialTheme.colorScheme.background, Color.Transparent
+                                        )
+                                    )
+                                )
+                        )
+                        Box(
+                            Modifier
+                                .fillMaxWidth()
+                                .height(20.dp)
+                                .align(Alignment.BottomCenter)
+                                .background(
+                                    Brush.verticalGradient(
+                                        listOf(
+                                            Color.Transparent, MaterialTheme.colorScheme.background
+                                        )
+                                    )
+                                )
+                        )
                     }
                 }
             }
