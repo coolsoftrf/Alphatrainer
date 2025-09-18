@@ -7,6 +7,7 @@ import org.koin.core.qualifier.qualifier
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
 import ru.coolsoft.alphatrainer.nonwasm.data.AlphabetRepository
+import ru.coolsoft.alphatrainer.nonwasm.data.DictionaryRepository
 import ru.coolsoft.alphatrainer.nonwasm.data.LanguageRepository
 
 expect fun platformModule(): Module
@@ -15,6 +16,7 @@ fun commonModule(): Module {
     return module {
         single { LanguageRepository(get()) }
         single { AlphabetRepository(get()) }
+        single { DictionaryRepository(get()) }
     }
 }
 

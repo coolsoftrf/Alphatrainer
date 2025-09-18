@@ -47,8 +47,10 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
+import ru.coolsoft.alphatrainer.Section
+import ru.coolsoft.alphatrainer.data.alphabetFlipcardData
+import ru.coolsoft.alphatrainer.data.dictionaryFlipcardData
 import ru.coolsoft.alphatrainer.data.mockFlipCards
-import ru.coolsoft.alphatrainer.data.trainableFlipcardData
 import ru.coolsoft.alphatrainer.models.CardState
 import ru.coolsoft.alphatrainer.models.Flipcard
 import ru.coolsoft.alphatrainer.models.FlipcardsViewModel
@@ -60,10 +62,16 @@ import ru.coolsoft.alphatrainer.shared.FlipcardRequest
 @Composable
 fun FlipcardsScreen(
     flipcardRequest: FlipcardRequest,
+    source: Section,
     flipcardsModel: FlipcardsViewModel = viewModel(
         factory = flipcardsViewModelFactory(),
         extras = MutableCreationExtras().apply {
-            set(FlipcardsViewModel.DATA_PROVIDER, ::trainableFlipcardData)
+            set(
+                FlipcardsViewModel.DATA_PROVIDER, when (source) {
+                    Section.Alphabet -> ::alphabetFlipcardData
+                    Section.Dictionary -> ::dictionaryFlipcardData
+                }
+            )
         }
     ),
     onGoHome: () -> Unit
@@ -95,10 +103,10 @@ fun FlipcardsScreen(
                     Modifier
                         .padding(20.dp)
                         .graphicsLayer(
-                        scaleX = timerFontScale,
-                        scaleY = timerFontScale,
-                        transformOrigin = TransformOrigin(0.5f, -1f)
-                    ),
+                            scaleX = timerFontScale,
+                            scaleY = timerFontScale,
+                            transformOrigin = TransformOrigin(0.5f, -1f)
+                        ),
                     MaterialTheme.colorScheme.onBackground,
                 )
                 Text(
@@ -114,7 +122,7 @@ fun FlipcardsScreen(
                 )
                 when (gameState) {
                     GameState.OVER -> FinalActions(flipcardRequest, flipcardsModel, onGoHome)
-                    else -> GameField(cards, flipcardsModel)
+                    else -> GameField(cards, flipcardsModel, source)
                 }
             }
             ?: CircularProgressIndicator(Modifier.padding(20.dp))
@@ -127,11 +135,17 @@ fun GameField(
     @PreviewParameter(CardsPreviewProvider::class)
     cards: List<Flipcard>,
     @PreviewParameter(FlipcardsViewModelProvider::class)
-    flipcardsModel: FlipcardsViewModel
+    flipcardsModel: FlipcardsViewModel,
+    source: Section
 ) {
     LazyVerticalGrid(
-        columns = GridCells.FixedSize(80.dp),
-        modifier = Modifier.wrapContentWidth(),
+        columns = when (source) {
+            Section.Alphabet -> GridCells.FixedSize(80.dp)
+            Section.Dictionary -> GridCells.Fixed(2)
+        },
+        modifier = Modifier
+            .wrapContentWidth()
+            .padding(horizontal = 20.dp),
         horizontalArrangement = Arrangement.spacedBy(
             10.dp,
             Alignment.CenterHorizontally
@@ -171,8 +185,13 @@ fun GameField(
                     onClick = { flipcardsModel.onCardClicked(index) },
                     shape = RoundedCornerShape(20),
                     modifier = Modifier
-                        .aspectRatio(1f)
-                        .scale(scaleX, 1f),
+                        .scale(scaleX, 1f)
+                        .run {
+                            if (source == Section.Alphabet)
+                                aspectRatio(1f)
+                            else
+                                this
+                        },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = cardColor,
                         contentColor = MaterialTheme.colorScheme.onBackground
@@ -221,7 +240,7 @@ private class FlipcardsViewModelProvider : PreviewParameterProvider<FlipcardsVie
         flipcardsViewModelFactory().create(
             FlipcardsViewModel::class,
             MutableCreationExtras().apply {
-                set(FlipcardsViewModel.DATA_PROVIDER, ::trainableFlipcardData)
+                set(FlipcardsViewModel.DATA_PROVIDER, ::alphabetFlipcardData)
             })
     )
 }

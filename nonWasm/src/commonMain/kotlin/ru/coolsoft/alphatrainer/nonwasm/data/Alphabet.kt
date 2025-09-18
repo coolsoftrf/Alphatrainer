@@ -3,13 +3,22 @@ package ru.coolsoft.alphatrainer.nonwasm.data
 import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.ForeignKey.Companion.CASCADE
+import androidx.room.ForeignKey.Companion.RESTRICT
 import androidx.room.Insert
 import androidx.room.Query
-import kotlinx.coroutines.flow.Flow
 import ru.coolsoft.alphatrainer.shared.ISymbol
 import ru.coolsoft.alphatrainer.shared.ISymbolPair
 
-@Entity("Alphabets", primaryKeys = ["_id", "LangId", "ScriptLangId"])
+@Entity(
+    "Alphabets",
+    primaryKeys = ["_id", "LangId", "ScriptLangId"],
+    foreignKeys = [
+        ForeignKey(BaseEntity::class, ["_id"], ["LangId"], RESTRICT, CASCADE),
+        ForeignKey(BaseEntity::class, ["_id"], ["ScriptLangId"], RESTRICT, CASCADE)
+    ]
+)
 data class SymbolEntity(
     @ColumnInfo(name = "_id") override val id: String,
     @ColumnInfo(name = "Symbol") override val name: String,
@@ -49,11 +58,11 @@ interface AlphabetDao {
                a.auxiliary = 0
                 """
     )
-    fun getAllSymbolPairs(
+    suspend fun getAllSymbolPairs(
         language: String,
         learntLanguage: String,
         scriptLanguage: String,
-    ): Flow<List<SymbolPairEntity>>
+    ): List<SymbolPairEntity>
 
     @Insert
     suspend fun insert(symbol: SymbolEntity)

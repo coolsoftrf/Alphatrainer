@@ -1,20 +1,12 @@
+###  * UX
+
+- [ ] Release note: breaking change for Android – data cleanup required 
+
 ###  * Fix:
 
-- [x] transcription language resets (internally) when navigating back from flipcards
-    - start matching with non-default transcription
-    - go back
-    - AR:  transcription visually remains but logically resets to default/fallback
-    - ER: both remain and match
-- [X] detect locale hot changes on Languages screen
-- [X] detect locale hot changes on Alphabets screen
+- [ ] sometimes it takes 2 or more clicks on a dropdown before it expands
 - [ ] sometimes cards are not clickable (latest clicked the previous time or what?)
 - [ ] sometimes cards are weakly or not at all shuffled
-
-###  * User experience
-
-- [X] publish debug apk
-- [X] describe database update procedure
-- [X] invite into «Discussions» section
 
 ###  * Database
 
@@ -22,15 +14,11 @@
 
 ###  * Features
 
-- [ ] add Armenian language
-    - [x] Entities
-    - [x] Capital letters
-    - [x] Lowercase letters
-    - [ ] transcriptions for letter names
+- [ ] transcriptions for Armenian letter names
 - [ ] add dictionary mode
-    - [ ] learning
-    - [ ] training with flipcards
+    - [X] training with flipcards
     - [ ] training with manual input
+    - [ ] learning
     - [ ] periodic «Time to train» notifications
 
 ###  * Back to Database

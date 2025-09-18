@@ -4,32 +4,45 @@ import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
 import ru.coolsoft.alphatrainer.FALLBACK_LANGUAGE
 import ru.coolsoft.alphatrainer.models.Flipcard
+import ru.coolsoft.alphatrainer.shared.EntityKey
 import ru.coolsoft.alphatrainer.shared.FlipcardRequest
 import ru.coolsoft.alphatrainer.shared.ICategorizedLocalizedEntity
 import ru.coolsoft.alphatrainer.shared.ILocalizedEntity
 import ru.coolsoft.alphatrainer.shared.ISymbolPair
 
+//ToDo: extract all multiplatform functions into a single class
 
 @Serializable
 data class LocalizedString(
     val id: String,
     val name: String,
+    val isPrimary: Boolean,
     val transcriptions: Map<String, String>
 ) {
-    fun transcription(uiLanguageId: String) =
-        transcriptions[uiLanguageId] ?: transcriptions[FALLBACK_LANGUAGE]
+    fun name(languageId: String) =
+        transcriptions[languageId] ?: name
+
+    fun transcription(languageId: String) =
+        transcriptions[languageId] ?: transcriptions[FALLBACK_LANGUAGE]
 }
 
-fun localizedString(entityLocalizations: Map.Entry<Pair<String, String>, List<ILocalizedEntity>>) =
+private fun localizedString(entityLocalizations: Map.Entry<EntityKey, List<ILocalizedEntity>>) =
     entityLocalizations.run {
         LocalizedString(
-            key.first,
-            key.second,
+            key.id, key.name, key.isPrimary,
             value
                 .filter { e -> e.spellLangId != null && e.spell != null }
                 .associate { e -> e.spellLangId!! to e.spell!! }
         )
     }
+
+private fun List<ILocalizedEntity>.toLocalizations() =
+    groupBy { EntityKey(it) }
+        .map(::localizedString)
+
+private fun List<ICategorizedLocalizedEntity>.toCategorizedLocalizations() =
+    groupBy { it.category }
+        .mapValues { it.value.toLocalizations() }
 
 // ------------------------------------------
 // Flipcards
@@ -46,23 +59,38 @@ suspend fun mockFlipcardData(request: FlipcardRequest): List<Flipcard> {
 }
 
 expect suspend fun getTrainableAlphabet(request: FlipcardRequest): List<ISymbolPair>
+expect suspend fun getTrainableDictionary(request: FlipcardRequest): List<ISymbolPair>
 
-suspend fun trainableFlipcardData(request: FlipcardRequest): List<Flipcard> {
-    return getTrainableAlphabet(request).shuffled().map { pair ->
-        listOf(
-            Flipcard(pair.id, pair.name),
-            Flipcard(pair.id, pair.run { spellName ?: id })
-        )
-    }.flatten().shuffled()
-}
+private fun List<ISymbolPair>.toPairs(fallback: Boolean) =
+    (if (fallback) this else filter { it.spellName != null })
+        .map {
+            it.run {
+                Flipcard(id, name) to Flipcard(id, spellName ?: id)
+            }
+        }
+
+private fun List<Pair<Flipcard, Flipcard>>.flatten() =
+    flatMap { listOf(it.first, it.second) }
+
+suspend fun alphabetFlipcardData(request: FlipcardRequest): List<Flipcard> =
+    getTrainableAlphabet(request).toPairs(request.scriptLanguage == FALLBACK_LANGUAGE)
+        .flatten()
+        .shuffled()
+
+suspend fun dictionaryFlipcardData(request: FlipcardRequest): List<Flipcard> =
+    getTrainableDictionary(request).toPairs(request.scriptLanguage == FALLBACK_LANGUAGE)
+        .unzip()
+        .run {
+            first.shuffled() zip second.shuffled()
+        }.flatten()
 
 // ------------------------------------------
 // Alphabets
 // ------------------------------------------
 //ToDo: Move these mocks to tests
 val mockAlphabets = listOf(
-    LocalizedString("jakana_hi", "ひらがな", mapOf(FALLBACK_LANGUAGE to "Hiragana")),
-    LocalizedString("jakana_ka", "カタカナ", mapOf(FALLBACK_LANGUAGE to "Katakana")),
+    LocalizedString("jakana_hi", "ひらがな", true, mapOf(FALLBACK_LANGUAGE to "Hiragana")),
+    LocalizedString("jakana_ka", "カタカナ", true, mapOf(FALLBACK_LANGUAGE to "Katakana")),
 )
 
 suspend fun mockAlphabetsData(languageId: String): List<LocalizedString> {
@@ -74,11 +102,8 @@ expect suspend fun getAvailableAlphabets(
     language: String
 ): List<ILocalizedEntity>
 
-suspend fun availableAlphabets(language: String): List<LocalizedString> {
-    return getAvailableAlphabets(language)
-        .groupBy { it.id to it.name }
-        .map { localizedString(it) }
-}
+suspend fun availableAlphabets(language: String): List<LocalizedString> =
+    getAvailableAlphabets(language).toLocalizations()
 
 // ------------------------------------------
 // Languages
@@ -86,9 +111,7 @@ suspend fun availableAlphabets(language: String): List<LocalizedString> {
 expect suspend fun getTrainableLanguages(): List<ILocalizedEntity>
 
 suspend fun trainableLanguages(): List<LocalizedString> {
-    return getTrainableLanguages()
-        .groupBy { it.id to it.name }
-        .map(::localizedString)
+    return getTrainableLanguages().toLocalizations()
 }
 
 expect suspend fun getScriptAlphabetsForAlphabets(
@@ -97,11 +120,26 @@ expect suspend fun getScriptAlphabetsForAlphabets(
 
 suspend fun scriptAlphabetsForAlphabetList(
     alphabets: List<String>
-): Map<String, List<LocalizedString>> {
-    return getScriptAlphabetsForAlphabets(alphabets)
-        .groupBy { it.category }
-        .mapValues {
-            it.value.groupBy { e -> e.id to e.name }
-                .map(::localizedString)
-        }
-}
+): Map<String, List<LocalizedString>> =
+    getScriptAlphabetsForAlphabets(alphabets).toCategorizedLocalizations()
+
+// ------------------------------------------
+// Dictionaries
+// ------------------------------------------
+
+expect suspend fun getDictionariesForLanguage(
+    languageId: String
+): List<ILocalizedEntity>
+
+suspend fun dictionariesForLanguage(
+    languageId: String
+): List<LocalizedString> = getDictionariesForLanguage(languageId).toLocalizations()
+
+expect suspend fun getScriptAlphabetsForDictionaries(
+    dictionaries: List<String>
+): List<ICategorizedLocalizedEntity>
+
+suspend fun scriptAlphabetsForDictionaries(
+    dictionaries: List<String>
+): Map<String, List<LocalizedString>> =
+    getScriptAlphabetsForDictionaries(dictionaries).toCategorizedLocalizations()

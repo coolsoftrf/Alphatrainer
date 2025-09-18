@@ -2,30 +2,34 @@ package ru.coolsoft.alphatrainer.nonwasm.data
 
 import androidx.room.ColumnInfo
 import androidx.room.Dao
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.Insert
 import androidx.room.PrimaryKey
 import androidx.room.Query
-import kotlinx.coroutines.flow.Flow
+import ru.coolsoft.alphatrainer.shared.BitField
+import ru.coolsoft.alphatrainer.shared.ICategorizedLocalizedEntity
 import ru.coolsoft.alphatrainer.shared.IEntity
 import ru.coolsoft.alphatrainer.shared.ILocalizedEntity
-import ru.coolsoft.alphatrainer.shared.ICategorizedLocalizedEntity
 
-enum class BitField(val bitMask: Int) {
-    LanguageBitMask(1),
-    AlphabetBitMask(2),
-    //TrainingLevelBitMask(4)
-}
-
-@androidx.room.Entity("Entities")
-data class Entity(
+@Entity("Entities")
+data class BaseEntity(
     @PrimaryKey @ColumnInfo(name = "_id") override val id: String,
     @ColumnInfo(name = "Name") override val name: String,
     @ColumnInfo(name = "Flags") val flags: Int
 ) : IEntity {
-    constructor(entity: IEntity, flags: BitField) : this(entity.id, entity.name, flags.bitMask)
+    constructor(entity: IEntity, flags: BitField) : this(entity.id, entity.name, flags())
 }
 
-@androidx.room.Entity("Spells", primaryKeys = ["_id", "SpellLangId", "LangId"])
+@Entity(
+    "Spells",
+    primaryKeys = ["_id", "SpellLangId", "LangId"],
+    foreignKeys = [
+        ForeignKey(BaseEntity::class, ["_id"], ["SpellLangId"], onUpdate = CASCADE),
+        ForeignKey(BaseEntity::class, ["_id"], ["LangId"], onUpdate = CASCADE)
+    ]
+)
 data class SpellEntity(
     @ColumnInfo(name = "_id") val id: String,
     @ColumnInfo(name = "Spell") val spell: String,
@@ -36,18 +40,18 @@ data class SpellEntity(
 data class LocalizedEntity(
     @ColumnInfo(name = "_id") override val id: String,
     @ColumnInfo(name = "Name") override val name: String,
-    @ColumnInfo(name = "Flags") val flags: Int,
     @ColumnInfo(name = "SpellLangId") override val spellLangId: String?,
-    @ColumnInfo(name = "Spell") override val spell: String?
+    @ColumnInfo(name = "Spell") override val spell: String?,
+    @ColumnInfo(name = "Primary") override val isPrimary: Boolean?
 ) : ILocalizedEntity
 
 data class CategorizedLocalizedEntity(
     override val category: String,
     @ColumnInfo(name = "_id") override val id: String,
     @ColumnInfo(name = "Name") override val name: String,
-    @ColumnInfo(name = "Flags") val flags: Int,
     @ColumnInfo(name = "SpellLangId") override val spellLangId: String?,
-    @ColumnInfo(name = "Spell") override val spell: String?
+    @ColumnInfo(name = "Spell") override val spell: String?,
+    @ColumnInfo(name = "Primary") override val isPrimary: Boolean?
 ) : ICategorizedLocalizedEntity
 
 const val LOCALIZED_ENTITY_FIELDS = """
@@ -60,7 +64,7 @@ const val JOIN_SPELL_TABLES = """
    Spells s ON e._id = s.LangId AND
           s._id = ""
 """
-const val WHERE_BITMASK = " WHERE (flags & :bitMask) > 0"
+const val WHERE_BITMASK = " WHERE (Flags & :bitMask) > 0"
 const val QUERY_LOCALIZED_ENTITY =
     "SELECT $LOCALIZED_ENTITY_FIELDS FROM Entities e $JOIN_SPELL_TABLES$WHERE_BITMASK"
 
@@ -73,16 +77,34 @@ const val QUERY_SCRIPT_LANGUAGES = """
     SELECT "", ""
 """
 
+const val QUERY_DICT_SECTIONS = """
+    SELECT DISTINCT LevelId
+      FROM Dict
+    WHERE LangId LIKE :langIdBase || '%' 
+"""
+
+const val QUERY_DICT_LEVELS = """
+    SELECT DISTINCT LangId, LevelId
+      FROM Dict
+     WHERE LevelId IN (:dictIds)
+"""
+
 @Dao
 interface EntitiesDao {
     @Query(QUERY_LOCALIZED_ENTITY)
-    fun getAllEntitiesByFlagMask(bitMask: Int): Flow<List<LocalizedEntity>>
+    suspend fun getAllEntitiesByFlagMask(bitMask: Int): List<LocalizedEntity>
 
-    @Query("$QUERY_LOCALIZED_ENTITY AND e._id LIKE :idPattern")
-    fun getMatchingEntitiesByFlagMask(
-        idPattern: String,
+    @Query("$QUERY_LOCALIZED_ENTITY AND e._id LIKE :langIdBase || '%'")
+    suspend fun getMatchingEntitiesByFlagMask(
+        langIdBase: String,
         bitMask: Int
-    ): Flow<List<LocalizedEntity>>
+    ): List<LocalizedEntity>
+
+    @Query("$QUERY_LOCALIZED_ENTITY AND e._id IN ($QUERY_DICT_SECTIONS)")
+    suspend fun getEntitiesWithMatchingDictionariesByFlagMask(
+        langIdBase: String,
+        bitMask: Int
+    ): List<LocalizedEntity>
 
     @Query(
         """
@@ -94,10 +116,24 @@ interface EntitiesDao {
         $JOIN_SPELL_TABLES
         """
     )
-    fun getEntitiesForAlphabetsOfLanguageId(
+    suspend fun getEntitiesForAlphabetsOfLanguageId(
         languageIds: List<String>
-    ): Flow<List<CategorizedLocalizedEntity>>
+    ): List<CategorizedLocalizedEntity>
+
+    @Query(
+        """
+        WITH ds (lang, category) AS ($QUERY_DICT_LEVELS)
+        SELECT ds.category, $LOCALIZED_ENTITY_FIELDS, (e._id IN (ds.lang, "")) AS "Primary"
+        FROM ds
+        INNER JOIN
+        Entities e ON ds.lang like e._id || '%'
+        $JOIN_SPELL_TABLES
+        """
+    )
+    suspend fun getScriptAlphabetsForDictionaries(
+        dictIds: List<String>
+    ): List<CategorizedLocalizedEntity>
 
     @Insert
-    suspend fun insert(entity: Entity)
+    suspend fun insert(entity: BaseEntity)
 }

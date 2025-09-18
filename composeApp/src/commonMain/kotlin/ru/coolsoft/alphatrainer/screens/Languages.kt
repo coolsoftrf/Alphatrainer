@@ -4,7 +4,6 @@ import alphatrainer.composeapp.generated.resources.Res
 import alphatrainer.composeapp.generated.resources.im_learning
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -32,6 +31,7 @@ typealias OnLanguageSelectedListener = (languageId: String) -> Unit
 
 @Composable
 fun LanguagesScreen(
+    modifier: Modifier = Modifier,
     onLanguageSelected: OnLanguageSelectedListener,
     languagesModel: LanguagesViewModel = viewModel(
         factory = languagesViewModelFactory(),
@@ -48,9 +48,7 @@ fun LanguagesScreen(
     val languages by languagesModel.languages.collectAsState()
     val scrollState = rememberScrollState()
     Column(
-        Modifier
-            .verticalScroll(scrollState)
-            .fillMaxHeight(),
+        modifier.verticalScroll(scrollState),
         Arrangement.Center,
         Alignment.CenterHorizontally
     ) {

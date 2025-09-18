@@ -1,7 +1,5 @@
 package ru.coolsoft.alphatrainer.nonwasm.data
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import ru.coolsoft.alphatrainer.nonwasm.Koin
 import ru.coolsoft.alphatrainer.shared.FlipcardRequest
 import ru.coolsoft.alphatrainer.shared.IAlphabetRepository
@@ -11,7 +9,7 @@ import ru.coolsoft.alphatrainer.shared.ISymbolPair
 internal class AlphabetRepository(db: AppDatabase) : IAlphabetRepository {
     private val dao = db.getAlphabetDao()
 
-    override suspend fun getAllSymbolPairsForLanguage(request: FlipcardRequest): Flow<List<ISymbolPair>> {
+    override suspend fun getAllSymbolPairsForLanguage(request: FlipcardRequest): List<ISymbolPair> {
         val (language, learntLanguage, scriptLanguage) = request
         return dao.getAllSymbolPairs(language, learntLanguage, scriptLanguage)
     }
@@ -26,6 +24,6 @@ internal class AlphabetRepository(db: AppDatabase) : IAlphabetRepository {
 private val repository = Koin.di!!.koin.get<AlphabetRepository>()
 
 suspend fun fetchSymbolsForLanguage(request: FlipcardRequest): List<ISymbolPair> =
-    repository.getAllSymbolPairsForLanguage(request).first()
+    repository.getAllSymbolPairsForLanguage(request)
         .shuffled()
         .take(request.limitPairs)

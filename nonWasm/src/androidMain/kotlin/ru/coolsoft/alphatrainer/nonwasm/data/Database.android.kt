@@ -9,6 +9,7 @@ fun getDatabaseBuilder(ctx: Context, dbAssetUri: String): RoomDatabase.Builder<A
     val appContext = ctx.applicationContext
 
     val dbFile = appContext.getDatabasePath(DATABASE_FILENAME)
+    //ToDo: overwrite by CRCs of previous releases
     if (!dbFile.exists()) dbFile.outputStream().use { outStream ->
         ctx.assets.open(dbAssetUri.substringAfter("file:///android_asset/"))
             .use { inStream ->

@@ -7,6 +7,7 @@ import java.io.File
 
 fun getDatabaseBuilder(dbAssetUri: String): RoomDatabase.Builder<AppDatabase> {
     val dbFile = File(System.getProperty("user.dir"), DATABASE_FILENAME)
+    //ToDo: overwrite by CRCs of previous releases
     if (!dbFile.exists()) dbFile.outputStream().use { outStream ->
         Unit.javaClass.getResourceAsStream("/${dbAssetUri.split("!/")[1]}")
             .use { inStream ->
