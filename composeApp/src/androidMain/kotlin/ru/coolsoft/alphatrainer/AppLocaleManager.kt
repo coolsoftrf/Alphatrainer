@@ -12,7 +12,11 @@ class AndroidAppLocaleManager(val context: Context) : AppLocaleManager {
 
     override fun getLocale(): String {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            localManager?.applicationLocales ?: return DEFAULT_LANGUAGE
+            localManager?.run {
+                val locales = applicationLocales
+                if (locales.isEmpty) systemLocales else locales
+            }
+                ?: return DEFAULT_LANGUAGE
         } else {
             context.resources.configuration.locales
         }.run {

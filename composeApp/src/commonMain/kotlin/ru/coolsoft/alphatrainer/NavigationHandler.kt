@@ -21,7 +21,6 @@ typealias AlphabetsForAlphabetListProvider =
 
 class NavigationHandlerScope(
     val navController: NavHostController,
-    val pairCount: Int,
     val scope: CoroutineScope,
     val alphabetListProvider: AlphabetsForLanguageProvider = ::availableAlphabets,
     val transcriptionLanguageListProvider: AlphabetsForAlphabetListProvider = ::scriptAlphabetsForAlphabetList
@@ -63,26 +62,13 @@ class NavigationHandlerScope(
         dictionaries: List<LocalizedString>,
         dictionaryToTranscriptsMap: Map<String, List<LocalizedString>>
     ) {
-        if (alphabets.size == 1 &&
-            scriptLanguages[parentLanguageFor(alphabets.first().id)] == null
-        ) {
-            navController.navigate(
-                flipcards(
-                    Section.Alphabet,
-                    alphabets.first().id,
-                    FALLBACK_LANGUAGE,
-                    pairCount //ToDo: remaster UI flow to get rid of this implicity
-                )
+        navController.navigate(
+            ModeChooser(
+                forLanguage,
+                alphabets, scriptLanguages,
+                dictionaries, dictionaryToTranscriptsMap
             )
-        } else {
-            navController.navigate(
-                ModeChooser(
-                    forLanguage,
-                    alphabets, scriptLanguages,
-                    dictionaries, dictionaryToTranscriptsMap
-                )
-            )
-        }
+        )
     }
 
     fun onAlphabetSelected(alphabetId: String, scriptLanguageId: String, pairCount: Int) {
@@ -96,7 +82,12 @@ class NavigationHandlerScope(
         )
     }
 
-    fun onDictionarySelected(dictId: String, alphabetId: String, scriptAlphabetId: String, pairCount: Int) {
+    fun onDictionarySelected(
+        dictId: String,
+        alphabetId: String,
+        scriptAlphabetId: String,
+        pairCount: Int
+    ) {
         navController.navigate(
             Flipcards(
                 Section.Dictionary,
@@ -112,7 +103,6 @@ class NavigationHandlerScope(
 @Composable
 fun NavigationHandler(
     navController: NavHostController,
-    pairCount: Int,
     alphabetListProvider: AlphabetsForLanguageProvider = ::availableAlphabets,
     transcriptionLanguageListProvider: AlphabetsForAlphabetListProvider = ::scriptAlphabetsForAlphabetList,
     content: @Composable NavigationHandlerScope.() -> Unit
@@ -121,13 +111,11 @@ fun NavigationHandler(
     val navigationHandlerScope =
         remember(
             navController,
-            pairCount,
             alphabetListProvider,
             transcriptionLanguageListProvider
         ) {
             NavigationHandlerScope(
                 navController,
-                pairCount,
                 scope,
                 alphabetListProvider,
                 transcriptionLanguageListProvider

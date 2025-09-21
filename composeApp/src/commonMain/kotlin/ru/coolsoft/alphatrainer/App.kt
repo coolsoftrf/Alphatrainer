@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.Translate
 import androidx.compose.material.icons.outlined.TypeSpecimen
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -148,6 +147,8 @@ fun flipcardRequest(flipcards: Flipcards) = FlipcardRequest(
     flipcards.limitPairs,
 )
 
+private data class Selector(val name: String, val enabled: Boolean)
+
 val LocalAppLocalization = compositionLocalOf { DEFAULT_LANGUAGE }
 
 private const val TAG = "App"
@@ -182,7 +183,7 @@ fun App() {
                 }
             ) {
                 val pairCountState = rememberTextFieldState(DEFAULT_PAIR_COUNT.toString())
-                NavigationHandler(navController, pairCountState.text.toString().toInt()) {
+                NavigationHandler(navController) {
                     NavHost(
                         navController,
                         LanguageChooser,
@@ -194,11 +195,31 @@ fun App() {
                             }
                         }
                         composable<ModeChooser>(typeMap = ModeChooser.typeMap) { entry ->
-                            val (forLanguage, alphabets, transcriptionLanguages, dictionaries, dictionaryToTranscriptsMap) = entry.toRoute<ModeChooser>()
-                            val selectedSection =
-                                rememberSaveable { mutableStateOf(Section.Alphabet) }
+                            val (forLanguage,
+                                alphabets, transcriptionLanguages,
+                                dictionaries, dictionaryToTranscriptsMap
+                            ) = entry.toRoute<ModeChooser>()
+                            val sections = mapOf(
+                                Section.Alphabet to Selector(
+                                    stringResource(Res.string.alphabet),
+                                    alphabets.isNotEmpty()
+                                ),
+                                Section.Dictionary to Selector(
+                                    stringResource(Res.string.dictionary),
+                                    dictionaries.isNotEmpty()
+                                ),
+                            )
+                            val selectedSection = rememberSaveable {
+                                mutableStateOf(
+                                    when {
+                                        alphabets.isNotEmpty() -> Section.Alphabet
+                                        dictionaries.isNotEmpty() -> Section.Dictionary
+                                        else -> null
+                                    }
+                                )
+                            }
 
-                            NavContainer({ BarContent(selectedSection) }) {
+                            NavContainer({ BarContent(sections, selectedSection) }) {
                                 logger().i(TAG, "recomposing navContainer")
                                 TrainingModeScreen(
                                     forLanguage,
@@ -307,31 +328,21 @@ private fun BottomBarContainer(buttons: @Composable () -> Unit, content: @Compos
 }
 
 @Composable
-private fun BarContent(selectedSection: MutableState<Section>) {
-    NavigationRailItem(
-        selectedSection.value == Section.Alphabet,
-        { selectedSection.value = Section.Alphabet },
-        {
-            Icon(
-                Icons.Outlined.TypeSpecimen,
-                contentDescription = stringResource(Res.string.alphabet)
-            )
-        },
-        label = {
-            Text(stringResource(Res.string.alphabet))
-        }
-    )
-    NavigationRailItem(
-        selectedSection.value == Section.Dictionary,
-        { selectedSection.value = Section.Dictionary },
-        {
-            Icon(
-                Icons.Outlined.Translate,
-                contentDescription = stringResource(Res.string.dictionary)
-            )
-        },
-        label = {
-            Text(stringResource(Res.string.dictionary))
-        }
-    )
+private fun BarContent(sections: Map<Section, Selector>, selectedSection: MutableState<Section?>) {
+    sections.map { section ->
+        NavigationRailItem(
+            selectedSection.value == section.key,
+            { selectedSection.value = section.key },
+            {
+                Icon(
+                    Icons.Outlined.TypeSpecimen,
+                    contentDescription = section.value.name
+                )
+            },
+            enabled = section.value.enabled,
+            label = {
+                Text(section.value.name)
+            }
+        )
+    }
 }

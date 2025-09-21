@@ -14,7 +14,7 @@ fun TrainingModeScreen(
     alphabets: List<LocalizedString>,
     transcriptionLanguages: Map<String, List<LocalizedString>>,
     pairCountState: TextFieldState,
-    selectedSection: MutableState<Section>,
+    selectedSection: MutableState<Section?>,
 
     dictionaries: List<LocalizedString>,
     dictionaryToTranscriptsMap: Map<String, List<LocalizedString>>,
@@ -38,6 +38,8 @@ fun TrainingModeScreen(
                 pairCountState,
                 onDictionarySelected
             )
+
+            else -> {}
         }
     }
 }
