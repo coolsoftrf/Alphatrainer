@@ -4,18 +4,12 @@ import alphatrainer.composeapp.generated.resources.Res
 import alphatrainer.composeapp.generated.resources.alphabet
 import alphatrainer.composeapp.generated.resources.back
 import alphatrainer.composeapp.generated.resources.dictionary
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
@@ -41,10 +35,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalWindowInfo
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -57,6 +49,7 @@ import androidx.savedstate.write
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.jetbrains.compose.resources.stringResource
+import ru.coolsoft.alphatrainer.components.ShadedBox
 import ru.coolsoft.alphatrainer.data.LocalizedString
 import ru.coolsoft.alphatrainer.screens.DEFAULT_PAIR_COUNT
 import ru.coolsoft.alphatrainer.screens.FlipcardsScreen
@@ -101,13 +94,14 @@ data class ModeChooser(
     val forLanguage: String,
     val alphabets: List<LocalizedString>,
     val scriptLanguages: Map<String, List<LocalizedString>>,
-    val dictionaries: List<LocalizedString>,
+    val dictionaries:  Map<String, Pair<LocalizedString?, List<LocalizedString>>>,
     val dictionaryToTranscriptsMap: Map<String, List<LocalizedString>>
 ) {
     companion object {
         val typeMap = mapOf(
             typeMapItem<List<LocalizedString>>(),
-            typeMapItem<Map<String, List<LocalizedString>>>()
+            typeMapItem<Map<String, List<LocalizedString>>>(),
+            typeMapItem<Map<String, Pair<LocalizedString?, List<LocalizedString>>>>(),
         )
     }
 }
@@ -226,7 +220,7 @@ fun App() {
                                     alphabets,
                                     transcriptionLanguages,
                                     pairCountState,
-                                    selectedSection,
+                                    selectedSection.value,
                                     dictionaries,
                                     dictionaryToTranscriptsMap,
                                     ::onAlphabetSelected,
@@ -249,38 +243,6 @@ fun App() {
                 }
             }
         }
-    }
-}
-
-@Composable
-fun ShadedBox(modifier: Modifier = Modifier, content: @Composable BoxScope.() -> Unit) {
-    Box(modifier.systemBarsPadding()) {
-        content()
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .height(20.dp)
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            MaterialTheme.colorScheme.background, Color.Transparent
-                        )
-                    )
-                )
-        )
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .height(20.dp)
-                .align(Alignment.BottomCenter)
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            Color.Transparent, MaterialTheme.colorScheme.background
-                        )
-                    )
-                )
-        )
     }
 }
 

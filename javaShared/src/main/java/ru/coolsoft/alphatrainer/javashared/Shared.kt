@@ -7,7 +7,8 @@ import java.security.MessageDigest
 
 private val DATABASE_CHECKSUMS = listOf(
     "18a845ecb52627609dde5c263e320b7d", //1.2.0
-    "56a5577cb00321ce4fbd9b39ceb40516" //1.2.1
+    "56a5577cb00321ce4fbd9b39ceb40516", //1.2.1
+    "bf39b951b2c07f051edc748a0f96144e", //1.3.0
 )
 
 private val File.md5: String get() {

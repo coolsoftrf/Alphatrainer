@@ -29,7 +29,7 @@ actual suspend fun getScriptAlphabetsForAlphabets(
     TODO("Not yet implemented")
 }
 
-actual suspend fun getDictionariesForLanguage(languageId: String): List<ILocalizedEntity> {
+actual suspend fun getDictionariesForLanguage(languageId: String): List<ICategorizedLocalizedEntity> {
     TODO("Not yet implemented")
 }
 

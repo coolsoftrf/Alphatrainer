@@ -2,7 +2,7 @@ package ru.coolsoft.alphatrainer.data
 
 import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
-import ru.coolsoft.alphatrainer.FALLBACK_LANGUAGE
+import ru.coolsoft.alphatrainer.FALLBACK_ID
 import ru.coolsoft.alphatrainer.models.Flipcard
 import ru.coolsoft.alphatrainer.shared.EntityKey
 import ru.coolsoft.alphatrainer.shared.FlipcardRequest
@@ -23,11 +23,11 @@ data class LocalizedString(
         transcriptions[languageId] ?: name
 
     fun transcription(languageId: String) =
-        transcriptions[languageId] ?: transcriptions[FALLBACK_LANGUAGE]
+        transcriptions[languageId] ?: transcriptions[FALLBACK_ID]
 }
 
 private fun localizedString(entityLocalizations: Map.Entry<EntityKey, List<ILocalizedEntity>>) =
-    entityLocalizations.run {
+    with(entityLocalizations) {
         LocalizedString(
             key.id, key.name, key.isPrimary,
             value
@@ -64,7 +64,7 @@ expect suspend fun getTrainableDictionary(request: FlipcardRequest): List<ISymbo
 private fun List<ISymbolPair>.toPairs(fallback: Boolean) =
     (if (fallback) this else filter { it.spellName != null })
         .map {
-            it.run {
+            with(it) {
                 Flipcard(id, name) to Flipcard(id, spellName ?: id)
             }
         }
@@ -73,24 +73,23 @@ private fun List<Pair<Flipcard, Flipcard>>.flatten() =
     flatMap { listOf(it.first, it.second) }
 
 suspend fun alphabetFlipcardData(request: FlipcardRequest): List<Flipcard> =
-    getTrainableAlphabet(request).toPairs(request.scriptLanguage == FALLBACK_LANGUAGE)
+    getTrainableAlphabet(request).toPairs(request.scriptLanguage == FALLBACK_ID)
         .flatten()
         .shuffled()
 
 suspend fun dictionaryFlipcardData(request: FlipcardRequest): List<Flipcard> =
-    getTrainableDictionary(request).toPairs(request.scriptLanguage == FALLBACK_LANGUAGE)
+    getTrainableDictionary(request).toPairs(request.scriptLanguage == FALLBACK_ID)
         .unzip()
-        .run {
-            first.shuffled() zip second.shuffled()
-        }.flatten()
+        .run { first.shuffled() zip second.shuffled() }
+        .flatten()
 
 // ------------------------------------------
 // Alphabets
 // ------------------------------------------
 //ToDo: Move these mocks to tests
 val mockAlphabets = listOf(
-    LocalizedString("jakana_hi", "ひらがな", true, mapOf(FALLBACK_LANGUAGE to "Hiragana")),
-    LocalizedString("jakana_ka", "カタカナ", true, mapOf(FALLBACK_LANGUAGE to "Katakana")),
+    LocalizedString("jakana_hi", "ひらがな", true, mapOf(FALLBACK_ID to "Hiragana")),
+    LocalizedString("jakana_ka", "カタカナ", true, mapOf(FALLBACK_ID to "Katakana")),
 )
 
 suspend fun mockAlphabetsData(languageId: String): List<LocalizedString> {
@@ -129,11 +128,12 @@ suspend fun scriptAlphabetsForAlphabetList(
 
 expect suspend fun getDictionariesForLanguage(
     languageId: String
-): List<ILocalizedEntity>
+): List<ICategorizedLocalizedEntity>
 
 suspend fun dictionariesForLanguage(
     languageId: String
-): List<LocalizedString> = getDictionariesForLanguage(languageId).toLocalizations()
+): Map<String, List<LocalizedString>> =
+    getDictionariesForLanguage(languageId).toCategorizedLocalizations()
 
 expect suspend fun getScriptAlphabetsForDictionaries(
     dictionaries: List<String>

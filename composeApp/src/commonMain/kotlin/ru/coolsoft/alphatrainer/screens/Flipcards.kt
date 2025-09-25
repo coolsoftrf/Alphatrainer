@@ -140,7 +140,7 @@ fun GameField(
 ) {
     LazyVerticalGrid(
         columns = when (source) {
-            Section.Alphabet -> GridCells.FixedSize(80.dp)
+            Section.Alphabet -> GridCells.FixedSize(70.dp)
             Section.Dictionary -> GridCells.Fixed(2)
         },
         modifier = Modifier
@@ -216,7 +216,9 @@ fun FinalActions(
     val visibility = MutableTransitionState(false).apply { targetState = true }
     AnimatedVisibility(visibility, enter = slideInVertically(initialOffsetY = { it })) {
         Row(
-            Modifier.fillMaxHeight(),
+            Modifier
+                .padding(vertical = 80.dp)
+                .fillMaxHeight(),
             Arrangement.spacedBy(10.dp),
             Alignment.CenterVertically
         ) {

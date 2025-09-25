@@ -22,14 +22,14 @@ typealias AlphabetsForAlphabetListProvider =
 class NavigationHandlerScope(
     val navController: NavHostController,
     val scope: CoroutineScope,
-    val alphabetListProvider: AlphabetsForLanguageProvider = ::availableAlphabets,
-    val transcriptionLanguageListProvider: AlphabetsForAlphabetListProvider = ::scriptAlphabetsForAlphabetList
+    val alphabetListProvider: AlphabetsForLanguageProvider,
+    val transcriptionLanguageListProvider: AlphabetsForAlphabetListProvider
 ) {
     fun onLanguageSelected(languageId: String) {
         scope.launch {
             lateinit var alphabets: List<LocalizedString>
             lateinit var scriptLanguages: Map<String, List<LocalizedString>>
-            lateinit var dictionaries: List<LocalizedString>
+            lateinit var dictionaries: Map<String, List<LocalizedString>>
             lateinit var dictionaryToTranscriptsMap: Map<String, List<LocalizedString>>
             listOf(
                 launch {
@@ -40,11 +40,14 @@ class NavigationHandlerScope(
                 }, launch {
                     dictionaries = dictionariesForLanguage(languageId)
                     dictionaryToTranscriptsMap =
-                        scriptAlphabetsForDictionaries(dictionaries.map { it.id })
+                        scriptAlphabetsForDictionaries(
+                            dictionaries.values.flatten()
+                                .filter { it.isPrimary }
+                                .map { it.id })
                 }
             ).joinAll()
             withContext(Dispatchers.Main) {
-                onDataReady(
+                onLanguageDataReady(
                     languageId,
                     alphabets,
                     scriptLanguages,
@@ -55,18 +58,25 @@ class NavigationHandlerScope(
         }
     }
 
-    private fun onDataReady(
+    private fun onLanguageDataReady(
         forLanguage: String,
         alphabets: List<LocalizedString>,
         scriptLanguages: Map<String, List<LocalizedString>>,
-        dictionaries: List<LocalizedString>,
+        dictionaries: Map<String, List<LocalizedString>>,
         dictionaryToTranscriptsMap: Map<String, List<LocalizedString>>
     ) {
+        val dictMap = dictionaries.entries
+            .groupBy { e ->
+                parentOrFallback(e.key).let {
+                    if (dictionaries.containsKey(it)) it else FALLBACK_ID
+                }
+            }
+            .mapValues { e -> dictionaries[e.key]?.get(0) to e.value.map { l -> l.value[0] } }
         navController.navigate(
             ModeChooser(
                 forLanguage,
                 alphabets, scriptLanguages,
-                dictionaries, dictionaryToTranscriptsMap
+                dictMap, dictionaryToTranscriptsMap
             )
         )
     }

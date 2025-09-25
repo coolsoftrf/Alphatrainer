@@ -1,6 +1,9 @@
 package ru.coolsoft.alphatrainer.components
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
@@ -19,7 +22,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import ru.coolsoft.alphatrainer.data.LocalizedString
+import ru.coolsoft.alphatrainer.hierarchyLevel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,6 +35,7 @@ fun LanguageSelector(
     options: List<LocalizedString>,
     locale: String,
     selectedScriptLanguageOrdinal: MutableState<Int>,
+    hierarchical: Boolean = false,
     isEnabled: (option: LocalizedString) -> Boolean = { true }
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -48,10 +54,15 @@ fun LanguageSelector(
             options.forEachIndexed { i, option ->
                 DropdownMenuItem(
                     text = {
-                        Column {
-                            Text(option.name, style = MaterialTheme.typography.titleSmall)
-                            option.transcription(locale)?.let {
-                                Text(text = it, style = MaterialTheme.typography.bodySmall)
+                        Row{
+                            if(hierarchical){
+                                Spacer(Modifier.width((option.id.hierarchyLevel() * 20).dp))
+                            }
+                            Column {
+                                Text(option.name, style = MaterialTheme.typography.titleSmall)
+                                option.transcription(locale)?.let {
+                                    Text(text = it, style = MaterialTheme.typography.bodySmall)
+                                }
                             }
                         }
                     },

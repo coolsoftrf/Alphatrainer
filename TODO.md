@@ -1,6 +1,6 @@
 ###  * UX
 
-- [ ] Release note: breaking change for Android – data cleanup required 
+- [ ] remaster low-res icons
 
 ###  * Fix:
 

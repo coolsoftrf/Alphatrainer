@@ -28,7 +28,7 @@ actual suspend fun getScriptAlphabetsForAlphabets(
     alphabets: List<String>
 ): List<ICategorizedLocalizedEntity> = fetchScriptAlphabetsForAlphabets(alphabets)
 
-actual suspend fun getDictionariesForLanguage(languageId: String): List<ILocalizedEntity> =
+actual suspend fun getDictionariesForLanguage(languageId: String): List<ICategorizedLocalizedEntity> =
     fetchDictionariesForLanguage(languageId)
 
 actual suspend fun getScriptAlphabetsForDictionaries(dictionaries: List<String>): List<ICategorizedLocalizedEntity> =

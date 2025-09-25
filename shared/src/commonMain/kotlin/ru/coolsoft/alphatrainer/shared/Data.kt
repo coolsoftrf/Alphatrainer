@@ -43,7 +43,7 @@ interface ILanguageRepository {
     suspend fun getAlphabetsForLanguage(language: String): List<ILocalizedEntity>
     suspend fun getScriptAlphabetsForAlphabets(languages: List<String>): List<ICategorizedLocalizedEntity>
 
-    suspend fun getDictionariesForLanguage(languageId: String): List<ILocalizedEntity>
+    suspend fun getDictionariesForLanguage(languageId: String): List<ICategorizedLocalizedEntity>
     suspend fun getScriptAlphabetsForDictionaries(dictionaries: List<String>): List<ICategorizedLocalizedEntity>
 
     suspend fun insert(entity: IEntity)

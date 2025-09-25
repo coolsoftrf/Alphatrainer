@@ -8,6 +8,7 @@
     <string name="im_learning_alphabet">Я изучаю алфавит</string>
     <string name="im_learning_words">Я изучаю слова</string>
     <string name="script_alphabet">Алфавит для транскрипций</string>
+    <string name="dictionaries_assorted">Разные</string>
     <string name="char_pair_count">Количество букв в игре</string>
     <string name="word_pair_count">Количество слов в игре</string>
 

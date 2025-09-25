@@ -64,9 +64,10 @@ const val JOIN_SPELL_TABLES = """
    Spells s ON e._id = s.LangId AND
           s._id = ""
 """
-const val WHERE_BITMASK = " WHERE (Flags & :bitMask) > 0"
 const val QUERY_LOCALIZED_ENTITY =
-    "SELECT $LOCALIZED_ENTITY_FIELDS FROM Entities e $JOIN_SPELL_TABLES$WHERE_BITMASK"
+    "SELECT $LOCALIZED_ENTITY_FIELDS FROM Entities e $JOIN_SPELL_TABLES"
+const val WHERE_BITMASK = " WHERE (e.Flags & :bitMask) > 0"
+const val QUERY_LOCALIZED_ENTITY_BY_BITMASK = "$QUERY_LOCALIZED_ENTITY$WHERE_BITMASK"
 
 const val QUERY_SCRIPT_LANGUAGES = """
     SELECT DISTINCT ScriptLangId, LangId
@@ -78,9 +79,24 @@ const val QUERY_SCRIPT_LANGUAGES = """
 """
 
 const val QUERY_DICT_SECTIONS = """
-    SELECT DISTINCT LevelId
+    SELECT DISTINCT LevelId,
+                    RTRIM(RTRIM(LevelId, replace(LevelId, '_', '') ), '_')
       FROM Dict
-    WHERE LangId LIKE :langIdBase || '%' 
+     WHERE LangId LIKE :langIdBase || '%' 
+"""
+const val QUERY_ENABLED_DS_ENTITIES = """
+    SELECT DISTINCT ds._id, e.Name, ds.parentId, pe.Name
+      FROM ds
+           JOIN Entities e USING (_id)
+           JOIN Entities pe ON pe._id = parentId
+     $WHERE_BITMASK
+"""
+const val QUERY_DS_ENTITIES_UNION = """
+    SELECT _id, Name, true
+      FROM enabled
+    UNION
+    SELECT parentId, parentName, false
+      FROM enabled
 """
 
 const val QUERY_DICT_LEVELS = """
@@ -91,29 +107,37 @@ const val QUERY_DICT_LEVELS = """
 
 @Dao
 interface EntitiesDao {
-    @Query(QUERY_LOCALIZED_ENTITY)
+    @Query(QUERY_LOCALIZED_ENTITY_BY_BITMASK)
     suspend fun getAllEntitiesByFlagMask(bitMask: Int): List<LocalizedEntity>
 
-    @Query("$QUERY_LOCALIZED_ENTITY AND e._id LIKE :langIdBase || '%'")
+    @Query("$QUERY_LOCALIZED_ENTITY_BY_BITMASK AND e._id LIKE :langIdBase || '%'")
     suspend fun getMatchingEntitiesByFlagMask(
         langIdBase: String,
         bitMask: Int
     ): List<LocalizedEntity>
 
-    @Query("$QUERY_LOCALIZED_ENTITY AND e._id IN ($QUERY_DICT_SECTIONS)")
+    @Query("""
+        WITH                        ds(_id, parentId) AS ($QUERY_DICT_SECTIONS),
+             enabled(_id, name, parentId, parentName) AS ($QUERY_ENABLED_DS_ENTITIES),
+                united (_id, Name, "Primary") AS ($QUERY_DS_ENTITIES_UNION)
+
+        SELECT e._id as category, $LOCALIZED_ENTITY_FIELDS
+          FROM united e
+               $JOIN_SPELL_TABLES
+        """)
     suspend fun getEntitiesWithMatchingDictionariesByFlagMask(
         langIdBase: String,
         bitMask: Int
-    ): List<LocalizedEntity>
+    ): List<CategorizedLocalizedEntity>
 
     @Query(
         """
         WITH als (id, category) AS ($QUERY_SCRIPT_LANGUAGES)
         SELECT als.category, $LOCALIZED_ENTITY_FIELDS
-        FROM als
-        INNER JOIN
-        Entities e ON e._id = als.id
-        $JOIN_SPELL_TABLES
+          FROM als
+               JOIN
+               Entities e ON e._id = als.id
+               $JOIN_SPELL_TABLES
         """
     )
     suspend fun getEntitiesForAlphabetsOfLanguageId(
@@ -124,10 +148,10 @@ interface EntitiesDao {
         """
         WITH ds (lang, category) AS ($QUERY_DICT_LEVELS)
         SELECT ds.category, $LOCALIZED_ENTITY_FIELDS, (e._id IN (ds.lang, "")) AS "Primary"
-        FROM ds
-        INNER JOIN
-        Entities e ON ds.lang like e._id || '%'
-        $JOIN_SPELL_TABLES
+          FROM ds
+               JOIN
+               Entities e ON ds.lang like e._id || '%'
+               $JOIN_SPELL_TABLES
         """
     )
     suspend fun getScriptAlphabetsForDictionaries(

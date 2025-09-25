@@ -26,7 +26,7 @@ internal class LanguageRepository(db: AppDatabase) : ILanguageRepository {
     ): List<ICategorizedLocalizedEntity> =
         dao.getEntitiesForAlphabetsOfLanguageId(languages)
 
-    override suspend fun getDictionariesForLanguage(languageId: String): List<ILocalizedEntity> =
+    override suspend fun getDictionariesForLanguage(languageId: String): List<ICategorizedLocalizedEntity> =
         dao.getEntitiesWithMatchingDictionariesByFlagMask(
             languageId,
             BitField.DictionaryBitMask()
@@ -50,7 +50,7 @@ suspend fun fetchAlphabetsForLanguage(language: String): List<ILocalizedEntity> 
 suspend fun fetchScriptAlphabetsForAlphabets(alphabets: List<String>): List<ICategorizedLocalizedEntity> =
     repository.getScriptAlphabetsForAlphabets(alphabets)
 
-suspend fun fetchDictionariesForLanguage(languageId: String): List<ILocalizedEntity> =
+suspend fun fetchDictionariesForLanguage(languageId: String): List<ICategorizedLocalizedEntity> =
     repository.getDictionariesForLanguage(languageId)
 
 suspend fun fetchScriptAlphabetsForDictionaries(dictionaries: List<String>): List<ICategorizedLocalizedEntity> =

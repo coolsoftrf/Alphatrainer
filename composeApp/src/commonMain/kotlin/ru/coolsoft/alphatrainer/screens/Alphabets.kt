@@ -24,7 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
-import ru.coolsoft.alphatrainer.FALLBACK_LANGUAGE
+import ru.coolsoft.alphatrainer.FALLBACK_ID
 import ru.coolsoft.alphatrainer.LocalAppLocalization
 import ru.coolsoft.alphatrainer.parentLanguageFor
 import ru.coolsoft.alphatrainer.components.LanguageSelector
@@ -55,8 +55,8 @@ fun AlphabetsScreen(
     ) {
         val locale = LocalAppLocalization.current
         val selectedScriptLanguageOrdinal = rememberSaveable {
-            mutableStateOf(options.run {
-                listOf(locale, FALLBACK_LANGUAGE).firstNotNullOfOrNull {
+            mutableStateOf(with(options) {
+                listOf(locale, FALLBACK_ID).firstNotNullOfOrNull {
                     indexOfFirst { opt -> it == opt.id }.let { i ->
                         if (i == -1) null else i
                     }
@@ -112,8 +112,8 @@ private fun Alphabets(
                 )
             },
             Modifier.padding(10.dp),
-            a.run {
-                selectedScriptLanguage.id == FALLBACK_LANGUAGE ||
+            with(a) {
+                selectedScriptLanguage.id == FALLBACK_ID ||
                         baseToTranscriptMap[parentLanguageFor(id)]
                             ?.run {
                                 map { it.id }.contains(selectedScriptLanguage.id)
