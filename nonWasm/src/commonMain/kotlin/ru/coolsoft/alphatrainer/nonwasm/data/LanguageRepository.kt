@@ -1,6 +1,5 @@
 package ru.coolsoft.alphatrainer.nonwasm.data
 
-import ru.coolsoft.alphatrainer.nonwasm.Koin
 import ru.coolsoft.alphatrainer.shared.BitField
 import ru.coolsoft.alphatrainer.shared.ICategorizedLocalizedEntity
 import ru.coolsoft.alphatrainer.shared.IEntity
@@ -38,20 +37,3 @@ internal class LanguageRepository(db: AppDatabase) : ILanguageRepository {
     override suspend fun insert(entity: IEntity) =
         dao.insert(BaseEntity(entity, BitField.AlphabetBitMask))
 }
-
-private val repository = Koin.di!!.koin.get<LanguageRepository>()
-
-suspend fun fetchAllTrainableLanguages(): List<ILocalizedEntity> =
-    repository.getAllTrainableLanguages()
-
-suspend fun fetchAlphabetsForLanguage(language: String): List<ILocalizedEntity> =
-    repository.getAlphabetsForLanguage(language)
-
-suspend fun fetchScriptAlphabetsForAlphabets(alphabets: List<String>): List<ICategorizedLocalizedEntity> =
-    repository.getScriptAlphabetsForAlphabets(alphabets)
-
-suspend fun fetchDictionariesForLanguage(languageId: String): List<ICategorizedLocalizedEntity> =
-    repository.getDictionariesForLanguage(languageId)
-
-suspend fun fetchScriptAlphabetsForDictionaries(dictionaries: List<String>): List<ICategorizedLocalizedEntity> =
-    repository.getScriptAlphabetsForDictionaries(dictionaries)

@@ -46,8 +46,10 @@ import org.jetbrains.compose.resources.stringResource
 import ru.coolsoft.alphatrainer.FALLBACK_ID
 import ru.coolsoft.alphatrainer.LocalAppLocalization
 import ru.coolsoft.alphatrainer.components.LanguageSelector
+import ru.coolsoft.alphatrainer.components.LocalizedText
 import ru.coolsoft.alphatrainer.components.PairCountInput
 import ru.coolsoft.alphatrainer.components.ShadedBox
+import ru.coolsoft.alphatrainer.components.Size
 import ru.coolsoft.alphatrainer.data.LocalizedString
 
 
@@ -165,23 +167,16 @@ private fun Dictionaries(
                 40.dp
             ) {
                 Text("\n") //placeholder
-                Column(
-                    Modifier.align(Alignment.Center),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = if (id == FALLBACK_ID) stringResource(Res.string.dictionaries_assorted)
-                        else name(forLanguage),
-                        style = MaterialTheme.typography.titleMediumEmphasized
-                    )
-                    if (id != FALLBACK_ID) (transcription(locale) ?: name).let {
-                        if (it != name(forLanguage))
-                            Text(
-                                text = it,
-                                style = MaterialTheme.typography.bodySmallEmphasized
-                            )
-                    }
-                }
+                LocalizedText(
+                    if (id == FALLBACK_ID) stringResource(Res.string.dictionaries_assorted)
+                    else name(forLanguage),
+                    (transcription(locale) ?: name).takeIf {
+                        id != FALLBACK_ID && it != name(forLanguage)
+                    },
+                    Size.SmallEmphasized,
+                    Modifier.align(Alignment.Center)
+                )
+
                 ExposedDropdownMenuDefaults.TrailingIcon(
                     expanded,
                     Modifier
@@ -218,19 +213,12 @@ private fun Dictionaries(
                             } ?: false) &&
                                     d.id != selectedScriptAlphabet.id
                         ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(
-                                    text = d.name(forLanguage),
-                                    style = MaterialTheme.typography.titleLarge
-                                )
-                                (d.transcription(locale) ?: d.name).let {
-                                    if (it != d.name(forLanguage))
-                                        Text(
-                                            text = it,
-                                            style = MaterialTheme.typography.bodyMedium
-                                        )
-                                }
-                            }
+                            val name = d.name(forLanguage)
+                            LocalizedText(
+                                name,
+                                (d.transcription(locale) ?: d.name)
+                                    .takeIf { it != name }
+                            )
                         }
                     }
             }

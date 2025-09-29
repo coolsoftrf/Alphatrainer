@@ -10,10 +10,7 @@ import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.coolsoft.alphatrainer.data.LocalizedString
-import ru.coolsoft.alphatrainer.data.availableAlphabets
-import ru.coolsoft.alphatrainer.data.dictionariesForLanguage
-import ru.coolsoft.alphatrainer.data.scriptAlphabetsForAlphabetList
-import ru.coolsoft.alphatrainer.data.scriptAlphabetsForDictionaries
+import ru.coolsoft.alphatrainer.data.DataProvider
 
 typealias AlphabetsForLanguageProvider = suspend (language: String) -> List<LocalizedString>
 typealias AlphabetsForAlphabetListProvider =
@@ -38,9 +35,9 @@ class NavigationHandlerScope(
                         alphabets.map { parentLanguageFor(it.id) }.distinct()
                     )
                 }, launch {
-                    dictionaries = dictionariesForLanguage(languageId)
+                    dictionaries = DataProvider.dictionariesForLanguage(languageId)
                     dictionaryToTranscriptsMap =
-                        scriptAlphabetsForDictionaries(
+                        DataProvider.scriptAlphabetsForDictionaries(
                             dictionaries.values.flatten()
                                 .filter { it.isPrimary }
                                 .map { it.id })
@@ -113,8 +110,8 @@ class NavigationHandlerScope(
 @Composable
 fun NavigationHandler(
     navController: NavHostController,
-    alphabetListProvider: AlphabetsForLanguageProvider = ::availableAlphabets,
-    transcriptionLanguageListProvider: AlphabetsForAlphabetListProvider = ::scriptAlphabetsForAlphabetList,
+    alphabetListProvider: AlphabetsForLanguageProvider = DataProvider::availableAlphabets,
+    transcriptionLanguageListProvider: AlphabetsForAlphabetListProvider = DataProvider::scriptAlphabetsForAlphabetList,
     content: @Composable NavigationHandlerScope.() -> Unit
 ) {
     val scope = rememberCoroutineScope()

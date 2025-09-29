@@ -22,7 +22,8 @@ import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.jetbrains.compose.resources.stringResource
 import ru.coolsoft.alphatrainer.LocalAppLocalization
-import ru.coolsoft.alphatrainer.data.trainableLanguages
+import ru.coolsoft.alphatrainer.components.LocalizedText
+import ru.coolsoft.alphatrainer.data.DataProvider
 import ru.coolsoft.alphatrainer.models.LanguagesViewModel
 import ru.coolsoft.alphatrainer.models.languagesViewModelFactory
 
@@ -36,7 +37,7 @@ fun LanguagesScreen(
     languagesModel: LanguagesViewModel = viewModel(
         factory = languagesViewModelFactory(),
         extras = MutableCreationExtras().apply {
-            set(LanguagesViewModel.DATA_PROVIDER, ::trainableLanguages)
+            set(LanguagesViewModel.DATA_PROVIDER, DataProvider::trainableLanguages)
         }
     )
 ) {
@@ -64,15 +65,7 @@ fun LanguagesScreen(
                     { onLanguageSelected(l.id) },
                     Modifier.padding(10.dp)
                 ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(text = l.name, style = MaterialTheme.typography.titleLarge)
-                        l.transcription(locale)?.let {
-                            Text(
-                                text = it,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                    }
+                    LocalizedText(l.name, l.transcription(locale))
                 }
             }
         } ?: CircularProgressIndicator()

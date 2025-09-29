@@ -77,8 +77,6 @@ dependencies {
     add("kspJvm", libs.androidx.room.compiler)
 }
 
-
-
 room {
     schemaDirectory("$projectDir/schemas")
 }

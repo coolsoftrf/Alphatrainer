@@ -1,6 +1,6 @@
 ###  * UX
 
-- [ ] remaster low-res icons
+- [X] remaster low-res icons
 
 ###  * Fix:
 
@@ -10,7 +10,7 @@
 
 ###  * Database
 
-- [ ] store database in a user-writable location
+- [X] store database in a user-writable location
 
 ###  * Features
 

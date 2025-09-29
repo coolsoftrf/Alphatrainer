@@ -1,6 +1,5 @@
 package ru.coolsoft.alphatrainer.components
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
@@ -12,7 +11,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.coolsoft.alphatrainer.data.LocalizedString
@@ -54,16 +53,12 @@ fun LanguageSelector(
             options.forEachIndexed { i, option ->
                 DropdownMenuItem(
                     text = {
-                        Row{
-                            if(hierarchical){
+                        Row {
+                            if (hierarchical) {
                                 Spacer(Modifier.width((option.id.hierarchyLevel() * 20).dp))
                             }
-                            Column {
-                                Text(option.name, style = MaterialTheme.typography.titleSmall)
-                                option.transcription(locale)?.let {
-                                    Text(text = it, style = MaterialTheme.typography.bodySmall)
-                                }
-                            }
+                            LocalizedText(option.name, option.transcription(locale), Size.Small,
+                                horizontalAlignment = Alignment.Start)
                         }
                     },
                     onClick = {

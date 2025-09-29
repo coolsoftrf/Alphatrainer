@@ -1,10 +1,10 @@
 package ru.coolsoft.alphatrainer.nonwasm.data
 
-import ru.coolsoft.alphatrainer.nonwasm.Koin
 import ru.coolsoft.alphatrainer.shared.FlipcardRequest
 import ru.coolsoft.alphatrainer.shared.IAlphabetRepository
 import ru.coolsoft.alphatrainer.shared.ISymbol
 import ru.coolsoft.alphatrainer.shared.ISymbolPair
+
 
 internal class AlphabetRepository(db: AppDatabase) : IAlphabetRepository {
     private val dao = db.getAlphabetDao()
@@ -20,10 +20,3 @@ internal class AlphabetRepository(db: AppDatabase) : IAlphabetRepository {
         aux: Int
     ) = dao.insert(SymbolEntity(symbol, language, aux))
 }
-
-private val repository = Koin.di!!.koin.get<AlphabetRepository>()
-
-suspend fun fetchSymbolsForLanguage(request: FlipcardRequest): List<ISymbolPair> =
-    repository.getAllSymbolPairsForLanguage(request)
-        .shuffled()
-        .take(request.limitPairs)

@@ -28,6 +28,7 @@ import ru.coolsoft.alphatrainer.FALLBACK_ID
 import ru.coolsoft.alphatrainer.LocalAppLocalization
 import ru.coolsoft.alphatrainer.parentLanguageFor
 import ru.coolsoft.alphatrainer.components.LanguageSelector
+import ru.coolsoft.alphatrainer.components.LocalizedText
 import ru.coolsoft.alphatrainer.components.PairCountInput
 import ru.coolsoft.alphatrainer.data.LocalizedString
 
@@ -121,15 +122,7 @@ private fun Alphabets(
                         id != selectedScriptLanguage.id
             }
         ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(text = a.name, style = MaterialTheme.typography.titleLarge)
-                a.transcription(locale)?.let {
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
+            LocalizedText(a.name, a.transcription(locale))
         }
     }
 }

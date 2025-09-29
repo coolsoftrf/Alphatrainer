@@ -9,31 +9,34 @@ import org.koin.dsl.module
 import ru.coolsoft.alphatrainer.nonwasm.data.AlphabetRepository
 import ru.coolsoft.alphatrainer.nonwasm.data.DictionaryRepository
 import ru.coolsoft.alphatrainer.nonwasm.data.LanguageRepository
+import ru.coolsoft.alphatrainer.shared.IAlphabetRepository
+import ru.coolsoft.alphatrainer.shared.IDictionaryRepository
+import ru.coolsoft.alphatrainer.shared.ILanguageRepository
 
 expect fun platformModule(): Module
 
-fun commonModule(): Module {
+private fun commonModule(): Module {
     return module {
-        single { LanguageRepository(get()) }
-        single { AlphabetRepository(get()) }
-        single { DictionaryRepository(get()) }
+        single<ILanguageRepository> { LanguageRepository(get())}
+        single<IAlphabetRepository> { AlphabetRepository(get()) }
+        single<IDictionaryRepository> { DictionaryRepository(get()) }
     }
 }
 
-fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
+private fun initKoin(platformModule: Module, appDeclaration: KoinAppDeclaration) =
     startKoin {
         appDeclaration()
-        modules(platformModule(), commonModule())
+        modules(platformModule, commonModule())
     }
 
-object Koin {
-    var di: KoinApplication? = null
+internal expect val doSetupKoin: (
+    platformModule: Module,
+    appDeclaration: KoinAppDeclaration,
+    initKoin: (platformModule: Module, appDeclaration: KoinAppDeclaration) -> KoinApplication
+) -> Unit
 
-    fun setupKoin(appDeclaration: KoinAppDeclaration = {}) {
-        if (di == null) {
-            di = initKoin(appDeclaration)
-        }
-    }
+fun setupKoin(appDeclaration: KoinAppDeclaration = {}) {
+    doSetupKoin(platformModule(), appDeclaration, ::initKoin)
 }
 
 const val DATABASE_ASSET_URI_QUALIFIER = "dbUri"

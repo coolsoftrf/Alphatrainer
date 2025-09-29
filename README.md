@@ -13,7 +13,7 @@ one of the available modes:
 Choose a desired alphabet (for languages where there are several ones), adjust preferences and start
 training.
 
-#### Dictionary mode (under development)
+#### Dictionary mode
 
 Train your memory by choosing a desired alphabet to have words in, then choose an alphabet for
 translations and finally click a dictionary to work with.
@@ -40,9 +40,16 @@ shown in the app by adjusting appropriate table contents in the Training.db SQLi
 
 #### Android
 
+Starting version 1.3.2 no external connections are required to update database
+
+##### For Alphatrainer version prior to 1.3.2
+
+<details>
+<summary>Show details</summary>
+
 Database file location: `/data/data/ru.coolsoft.alphatrainer/databases/Trainer.db`
 
-> [!IMPORTANT]
+> [!]
 > In order to be able to gain access to the database file on a non-rooted Android device, a `debug`
 > version of the app has to be installed rather than a `release` one.
 
@@ -57,10 +64,19 @@ Here are the steps to accomplish this task using Android Studio:
 - upload the modified file to the device (right-click `databases` folder in Device Explorer, select
   `Upload...` and choose the modified database file)
 
+</details>
+
+##### For Alphatrainer version 1.3.2 and later
+
+Mirror copy of the working database is stored in the app OBB storage under
+`/sdcard/Android/obb/ru.coolsoft.alphatrainer/Databases/Trainer.db`. You can open this file in your
+favourite SQLite database editor and make all necessary adjustments. Once the changes are committed,
+they will be visible with the very next app start
+
 #### Desktop (JVM)
 
 Database file `Trainer.db` is located in the root folder of the app next to `Alphatrainer.exe` file.
-Any changes to the file will be visible with the very nex app start.
+Any changes to the file will be visible with the very next app start.
 
 ### Source code structure
 

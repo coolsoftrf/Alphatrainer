@@ -1,6 +1,5 @@
 package ru.coolsoft.alphatrainer.nonwasm.data
 
-import ru.coolsoft.alphatrainer.nonwasm.Koin
 import ru.coolsoft.alphatrainer.shared.FlipcardRequest
 import ru.coolsoft.alphatrainer.shared.IDictionaryRepository
 import ru.coolsoft.alphatrainer.shared.ISymbolPair
@@ -13,10 +12,3 @@ internal class DictionaryRepository(db: AppDatabase) : IDictionaryRepository {
         return dao.getAllWordPairs(dictionary, learntLanguage, scriptLanguage)
     }
 }
-
-private val repository = Koin.di!!.koin.get<DictionaryRepository>()
-
-suspend fun fetchSymbolsForDictionary(request: FlipcardRequest): List<ISymbolPair> =
-    repository.getAllWordPairsForDictionary(request)
-        .shuffled()
-        .take(request.limitPairs)

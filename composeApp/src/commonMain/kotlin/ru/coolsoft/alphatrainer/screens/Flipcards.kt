@@ -14,6 +14,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -40,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -48,8 +50,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
 import ru.coolsoft.alphatrainer.Section
-import ru.coolsoft.alphatrainer.data.alphabetFlipcardData
-import ru.coolsoft.alphatrainer.data.dictionaryFlipcardData
+import ru.coolsoft.alphatrainer.data.DataProvider
 import ru.coolsoft.alphatrainer.data.mockFlipCards
 import ru.coolsoft.alphatrainer.models.CardState
 import ru.coolsoft.alphatrainer.models.Flipcard
@@ -68,8 +69,8 @@ fun FlipcardsScreen(
         extras = MutableCreationExtras().apply {
             set(
                 FlipcardsViewModel.DATA_PROVIDER, when (source) {
-                    Section.Alphabet -> ::alphabetFlipcardData
-                    Section.Dictionary -> ::dictionaryFlipcardData
+                    Section.Alphabet -> DataProvider::alphabetFlipcardData
+                    Section.Dictionary -> DataProvider::dictionaryFlipcardData
                 }
             )
         }
@@ -140,7 +141,7 @@ fun GameField(
 ) {
     LazyVerticalGrid(
         columns = when (source) {
-            Section.Alphabet -> GridCells.FixedSize(70.dp)
+            Section.Alphabet -> GridCells.FixedSize(78.dp)
             Section.Dictionary -> GridCells.Fixed(2)
         },
         modifier = Modifier
@@ -198,7 +199,10 @@ fun GameField(
                     ),
                     contentPadding = TextButtonContentPadding
                 ) {
-                    Text(cards[index].title)
+                    Box(contentAlignment = Alignment.Center) {
+                        Text("\n") //placeholder
+                        Text(cards[index].title, textAlign = TextAlign.Center)
+                    }
                 }
             }
         }
@@ -242,7 +246,7 @@ private class FlipcardsViewModelProvider : PreviewParameterProvider<FlipcardsVie
         flipcardsViewModelFactory().create(
             FlipcardsViewModel::class,
             MutableCreationExtras().apply {
-                set(FlipcardsViewModel.DATA_PROVIDER, ::alphabetFlipcardData)
+                set(FlipcardsViewModel.DATA_PROVIDER, DataProvider::alphabetFlipcardData)
             })
     )
 }

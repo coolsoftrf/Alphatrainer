@@ -8,12 +8,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import org.koin.android.ext.koin.androidContext
-import ru.coolsoft.alphatrainer.nonwasm.Koin
 import ru.coolsoft.alphatrainer.nonwasm.databasePath
+import ru.coolsoft.alphatrainer.nonwasm.setupKoin
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        Koin.setupKoin{
+        setupKoin{
             androidContext(applicationContext)
             databasePath(dbAssetUri)
         }

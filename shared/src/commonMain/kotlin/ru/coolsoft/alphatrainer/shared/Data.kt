@@ -76,3 +76,13 @@ interface IAlphabetRepository {
 interface IDictionaryRepository {
     suspend fun getAllWordPairsForDictionary(request: FlipcardRequest): List<ISymbolPair>
 }
+
+interface IRawDataProvider {
+    suspend fun getTrainableAlphabet (request: FlipcardRequest) : List<ISymbolPair>
+    suspend fun getTrainableDictionary (request: FlipcardRequest): List<ISymbolPair>
+    val getAvailableAlphabets: suspend (language: String) -> List<ILocalizedEntity>
+    val getTrainableLanguages: suspend () -> List<ILocalizedEntity>
+    val getScriptAlphabetsForAlphabets: suspend (alphabets: List<String>) -> List<ICategorizedLocalizedEntity>
+    val getDictionariesForLanguage: suspend (languageId: String) -> List<ICategorizedLocalizedEntity>
+    val getScriptAlphabetsForDictionaries: suspend (dictionaries: List<String>) -> List<ICategorizedLocalizedEntity>
+}

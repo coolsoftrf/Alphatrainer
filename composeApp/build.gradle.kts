@@ -36,6 +36,7 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.koin.android)
             implementation(project(":nonWasm"))
+            implementation(project(":javaShared"))
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -62,6 +63,7 @@ kotlin {
 
             implementation(project(":nonAndroid"))
             implementation(project(":nonWasm"))
+            implementation(project(":javaShared"))
         }
         wasmJsMain.dependencies {
             implementation(project(":nonAndroid"))

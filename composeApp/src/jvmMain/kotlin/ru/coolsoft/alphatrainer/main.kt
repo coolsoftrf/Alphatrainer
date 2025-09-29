@@ -5,11 +5,11 @@ import alphatrainer.composeapp.generated.resources.icon_ico
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import org.jetbrains.compose.resources.painterResource
-import ru.coolsoft.alphatrainer.nonwasm.Koin
 import ru.coolsoft.alphatrainer.nonwasm.databasePath
+import ru.coolsoft.alphatrainer.nonwasm.setupKoin
 
 fun main() = application {
-    Koin.setupKoin{
+    setupKoin{
         databasePath(dbAssetUri)
     }
     Window(
