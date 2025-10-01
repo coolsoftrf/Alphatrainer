@@ -16,6 +16,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -147,6 +148,7 @@ fun GameField(
         modifier = Modifier
             .wrapContentWidth()
             .padding(horizontal = 20.dp),
+        contentPadding = PaddingValues(bottom = 20.dp),
         horizontalArrangement = Arrangement.spacedBy(
             10.dp,
             Alignment.CenterHorizontally
